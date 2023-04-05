@@ -1,16 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from "./app.module.css";
-
-import NxWelcome from "./nx-welcome";
+import styles from './app.module.css';
 
 export function App() {
-  return (
-    <>
-      <NxWelcome title="agency-chat-frontend" />
-
-      <div />
-    </>
-  );
+  return <div />;
 }
 
 export default App;
