@@ -1,4 +1,5 @@
 import { BaseService } from './base';
+import type { LoginData, RegisterData } from '@agency-chat/shared/interfaces';
 
 class AuthService extends BaseService {
   constructor() {
@@ -7,10 +8,13 @@ class AuthService extends BaseService {
 
   public async login(email: string, password: string) {
     try {
-      const loginResponse = await this.client.post('/login', {
-        email,
-        password,
-      });
+      const loginResponse = await this.client.post<any, any, LoginData>(
+        '/login',
+        {
+          email,
+          password,
+        }
+      );
       console.log(loginResponse);
     } catch (error) {
       console.error(error);
@@ -20,11 +24,14 @@ class AuthService extends BaseService {
 
   public async register(email: string, username: string, password: string) {
     try {
-      const registerResponse = await this.client.post('/register', {
-        email,
-        username,
-        password,
-      });
+      const registerResponse = await this.client.post<any, any, RegisterData>(
+        '/register',
+        {
+          email,
+          username,
+          password,
+        }
+      );
 
       console.log(registerResponse);
     } catch (error) {

@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@agency-chat/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
       "@agency-chat/shared/util-http-client": [
         "libs/shared/util-http-client/src/index.ts"
       ]
