@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { UserInfo } from '@agency-chat/shared/interfaces';
 import { LoginDto, RegisterDto } from './dto';
 import { AuthService } from './auth.service';
 
@@ -7,16 +8,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  login(@Body() loginDto: LoginDto): string {
-    this.authService.login(loginDto);
-
-    return 'login test';
+  async login(@Body() loginDto: LoginDto): Promise<UserInfo> {
+    return await this.authService.login(loginDto);
   }
 
   @Post('register')
-  register(@Body() registerDto: RegisterDto): string {
-    this.authService.register(registerDto);
-
-    return 'register test';
+  async register(@Body() registerDto: RegisterDto): Promise<UserInfo> {
+    return await this.authService.register(registerDto);
   }
 }

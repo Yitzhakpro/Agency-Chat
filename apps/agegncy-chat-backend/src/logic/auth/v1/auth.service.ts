@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LoginData, RegisterData } from '@agency-chat/shared/interfaces';
 import { compareHash, hashWithSalt } from '@agency-chat/shared/util-hashing';
+import { getUserInfo } from '@agency-chat/agency-chat-backend/util';
 import { UserService } from '../../user';
 
 @Injectable()
@@ -19,10 +20,8 @@ export class AuthService {
     if (!doesPasswordMatch) {
       throw new Error('Invalid Creds');
     }
-    console.log(user);
 
-    // TODO: change to get normal info without secrets
-    return user;
+    return getUserInfo(user);
   }
 
   async register(registerData: RegisterData) {
@@ -35,7 +34,6 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    // TODO: change to get normal info without secrets
-    return createdUser;
+    return getUserInfo(createdUser);
   }
 }
