@@ -4,6 +4,8 @@ export default () => ({
     token: {
       secret: process.env.TOKEN_SECRET || 'supersecret',
     },
-    cookie: {},
+    cookie: {
+      name: process.env.AUTH_COOKIE_NAME || 'authToken',
+    },
   },
 });

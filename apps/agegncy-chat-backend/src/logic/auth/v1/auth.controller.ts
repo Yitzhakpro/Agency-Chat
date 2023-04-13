@@ -1,4 +1,5 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UserInfo } from '@agency-chat/shared/interfaces';
 import { LoginDto, RegisterDto } from './dto';
 import { AuthService } from './auth.service';
@@ -6,7 +7,14 @@ import type { FastifyReply } from 'fastify';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  private cookieName: string;
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService
+  ) {
+    this.cookieName = configService.get<string>('auth.cookie.name');
+  }
 
   @Post('login')
   async login(
@@ -16,7 +24,7 @@ export class AuthController {
     const { token, userInfo } = await this.authService.login(loginDto);
 
     // TODO: add expire
-    response.setCookie('authCookie', token);
+    response.setCookie(this.cookieName, token);
     return userInfo;
   }
 
@@ -28,7 +36,7 @@ export class AuthController {
     const { token, userInfo } = await this.authService.register(registerDto);
 
     // TODO: add expire
-    response.setCookie('authCookie', token);
+    response.setCookie(this.cookieName, token);
     return userInfo;
   }
 }
