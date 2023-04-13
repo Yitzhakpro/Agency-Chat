@@ -1,4 +1,5 @@
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -24,6 +25,8 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
+  const configService = app.get(ConfigService);
+
   const config = new DocumentBuilder()
     .setTitle('Agency Chat Backend')
     .setDescription('Agency Chat API Routes')
@@ -32,7 +35,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  const port = process.env.PORT || 8080;
+  const port = configService.get<number>('port');
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
