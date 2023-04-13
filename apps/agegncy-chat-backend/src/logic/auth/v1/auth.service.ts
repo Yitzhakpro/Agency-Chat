@@ -1,30 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Users } from '@prisma/client';
 import { LoginData, RegisterData } from '@agency-chat/shared/interfaces';
 import { compareHash, hashWithSalt } from '@agency-chat/shared/util-hashing';
 import { getUserInfo } from '@agency-chat/agency-chat-backend/util';
 import { UserService } from '../../user';
+import type { AuthReturn } from './types';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userSerivce: UserService) {}
+  constructor(
+    private readonly userSerivce: UserService,
+    private readonly jwtService: JwtService
+  ) {}
 
-  async login(loginData: LoginData) {
+  private async createJwtToken(userInfo: Users) {
+    const { id, username, role } = userInfo;
+
+    const payload = { id, username, role };
+    const token = await this.jwtService.signAsync(payload);
+
+    return token;
+  }
+
+  async login(loginData: LoginData): Promise<AuthReturn> {
     const { email, password } = loginData;
 
     const user = await this.userSerivce.getByEmail(email);
     if (!user) {
-      throw new Error('Invalid Creds');
+      throw new UnauthorizedException();
     }
 
     const doesPasswordMatch = await compareHash(password, user.password);
     if (!doesPasswordMatch) {
-      throw new Error('Invalid Creds');
+      throw new UnauthorizedException();
     }
 
-    return getUserInfo(user);
+    const token = await this.createJwtToken(user);
+    const userInfo = getUserInfo(user);
+
+    return { token, userInfo };
   }
 
-  async register(registerData: RegisterData) {
+  async register(registerData: RegisterData): Promise<AuthReturn> {
     const { email, username, password } = registerData;
     const hashedPassword = await hashWithSalt(password);
 
@@ -34,6 +52,9 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    return getUserInfo(createdUser);
+    const token = await this.createJwtToken(createdUser);
+    const userInfo = getUserInfo(createdUser);
+
+    return { token, userInfo };
   }
 }

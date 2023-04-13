@@ -5,6 +5,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import fastifyCookie from '@fastify/cookie';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
@@ -12,6 +13,8 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter()
   );
+  await app.register(fastifyCookie);
+
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user';
 import {
   AuthController as AuthControllerV1,
@@ -6,7 +7,7 @@ import {
 } from './v1';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, JwtModule.register({ secret: 'test_for_now' })],
   controllers: [AuthControllerV1],
   providers: [AuthServiceV1],
 })
