@@ -8,12 +8,19 @@ import {
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import fastifyCookie from '@fastify/cookie';
 import { AppModule } from './app/app.module';
+import type { CorsOptions } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter()
   );
+
+  const configService = app.get(ConfigService);
+
+  const corsOptions = configService.get<CorsOptions>('corsConfig');
+  app.enableCors(corsOptions);
+
   await app.register(fastifyCookie);
 
   const globalPrefix = 'api';
@@ -24,8 +31,6 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
-
-  const configService = app.get(ConfigService);
 
   const config = new DocumentBuilder()
     .setTitle('Agency Chat Backend')
