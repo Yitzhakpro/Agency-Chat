@@ -1,39 +1,49 @@
 import { BaseService } from './base';
-import type { LoginData, RegisterData } from '@agency-chat/shared/interfaces';
+import type {
+  LoginData,
+  RegisterData,
+  UserInfo,
+} from '@agency-chat/shared/interfaces';
 
 class AuthService extends BaseService {
   constructor() {
     super('/api/v1/auth');
   }
 
-  public async login(email: string, password: string) {
+  public async login(email: string, password: string): Promise<UserInfo> {
     try {
-      const loginResponse = await this.client.post<any, any, LoginData>(
+      const loginResponse = await this.client.post<any, UserInfo, LoginData>(
         '/login',
         {
           email,
           password,
         }
       );
-      console.log(loginResponse);
+
+      return loginResponse;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  public async register(email: string, username: string, password: string) {
+  public async register(
+    email: string,
+    username: string,
+    password: string
+  ): Promise<UserInfo> {
     try {
-      const registerResponse = await this.client.post<any, any, RegisterData>(
-        '/register',
-        {
-          email,
-          username,
-          password,
-        }
-      );
+      const registerResponse = await this.client.post<
+        any,
+        UserInfo,
+        RegisterData
+      >('/register', {
+        email,
+        username,
+        password,
+      });
 
-      console.log(registerResponse);
+      return registerResponse;
     } catch (error) {
       console.error(error);
       throw error;

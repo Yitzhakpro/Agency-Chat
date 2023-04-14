@@ -5,7 +5,7 @@ export const createHttpClient = (
   baseURL: string,
   options?: CreateAxiosDefaults
 ): AxiosInstance => {
-  const instance = axios.create({ baseURL, ...options });
+  const instance = axios.create({ baseURL, withCredentials: true, ...options });
 
   return instance;
 };
