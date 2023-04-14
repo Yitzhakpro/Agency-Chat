@@ -10,6 +10,18 @@ class AuthService extends BaseService {
     super('/api/v1/auth');
   }
 
+  public async profile(): Promise<UserInfo> {
+    try {
+      const profileResponse = await this.client.get<any, UserInfo>('/profile');
+
+      return profileResponse;
+    } catch (error) {
+      console.log('not logged in');
+      console.error(error);
+      throw error;
+    }
+  }
+
   public async login(email: string, password: string): Promise<UserInfo> {
     try {
       const loginResponse = await this.client.post<any, UserInfo, LoginData>(
