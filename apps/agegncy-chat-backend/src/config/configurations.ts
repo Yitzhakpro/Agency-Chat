@@ -1,4 +1,5 @@
-import { CorsOptions } from './types';
+import type { CookieSerializeOptions } from '@fastify/cookie';
+import type { CorsOptions } from './types';
 
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 8080,
@@ -12,6 +13,12 @@ export default () => ({
     },
     cookie: {
       name: process.env.AUTH_COOKIE_NAME || 'authToken',
+      options: {
+        httpOnly: true,
+        path: '/',
+        sameSite: true,
+        maxAge: 86_400,
+      } as CookieSerializeOptions,
     },
   },
 });
