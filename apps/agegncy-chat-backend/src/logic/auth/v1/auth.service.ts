@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '@prisma/client';
-import { LoginData, RegisterData } from '@agency-chat/shared/interfaces';
+import { LoginData, RegisterData, UserInfo } from '@agency-chat/shared/interfaces';
 import { compareHash, hashWithSalt } from '@agency-chat/shared/util-hashing';
 import { getUserInfo } from '@agency-chat/agency-chat-backend/util';
 import { UserService } from '../../user';
@@ -21,6 +21,17 @@ export class AuthService {
     const token = await this.jwtService.signAsync(payload);
 
     return token;
+  }
+
+  async getProfile(id: string): Promise<UserInfo> {
+    const user = await this.userSerivce.getById(id);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const userInfo = getUserInfo(user);
+
+    return userInfo;
   }
 
   async login(loginData: LoginData): Promise<AuthReturn> {

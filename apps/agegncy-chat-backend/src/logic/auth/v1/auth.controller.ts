@@ -1,10 +1,22 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserInfo } from '@agency-chat/shared/interfaces';
+import { AuthGuard } from '../auth.guard';
 import { LoginDto, RegisterDto } from './dto';
 import { AuthService } from './auth.service';
 import type { FastifyReply } from 'fastify';
 import type { CookieSerializeOptions } from '@fastify/cookie';
+import type { AuthenticatedRequest } from '../../../types';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
@@ -21,8 +33,16 @@ export class AuthController {
     );
   }
 
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req: AuthenticatedRequest) {
+    const userInfo = await this.authService.getProfile(req.user.id);
+
+    return userInfo;
+  }
+
   @Post('login')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) response: FastifyReply
