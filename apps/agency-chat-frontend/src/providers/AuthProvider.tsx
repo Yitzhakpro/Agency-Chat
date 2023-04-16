@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import type { UserStateInfo } from '../types';
 import { Auth } from '../services';
 import AuthContext from '../context';
+import type { UserStateInfo } from '../types';
 
 interface IAuthProviderProps {
   children: React.ReactNode | React.ReactNode[];
@@ -10,7 +10,7 @@ interface IAuthProviderProps {
 function AuthProvider(props: IAuthProviderProps): JSX.Element {
   const { children } = props;
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<UserStateInfo>({
     isLoggedIn: false,
     id: '',
@@ -19,10 +19,10 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
     role: 'USER',
     createdAt: new Date(),
   });
-  const [error, setError] = useState({ isError: false, message: '' }); // TODO: think if needed
+  const [_error, setError] = useState({ isError: false, message: '' }); // TODO: think if needed
 
   useEffect(() => {
-    setIsLoading(false);
+    setIsLoading(true);
 
     Auth.profile()
       .then((res) => {

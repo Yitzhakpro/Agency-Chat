@@ -1,7 +1,10 @@
-import { useState } from 'react';
-import { Auth } from '../../services';
+import { useState, useContext } from 'react';
+import { Navigate } from 'react-router-dom';
+import AuthContext from '../../context';
 
 function Login(): JSX.Element {
+  const { isLoggedIn, login } = useContext(AuthContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -21,8 +24,12 @@ function Login(): JSX.Element {
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
-    await Auth.login(email, password);
+    await login(email, password);
   };
+
+  if (isLoggedIn) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <form onSubmit={handleSubmitLogin}>

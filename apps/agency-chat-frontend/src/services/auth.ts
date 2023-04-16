@@ -1,4 +1,5 @@
 import { BaseService } from './base';
+import type { AxiosResponse } from 'axios';
 import type {
   LoginData,
   RegisterData,
@@ -12,9 +13,9 @@ class AuthService extends BaseService {
 
   public async profile(): Promise<UserInfo> {
     try {
-      const profileResponse = await this.client.get<any, UserInfo>('/profile');
+      const profileResponse = await this.client.get<UserInfo>('/profile');
 
-      return profileResponse;
+      return profileResponse.data;
     } catch (error) {
       console.log('not logged in');
       console.error(error);
@@ -24,15 +25,16 @@ class AuthService extends BaseService {
 
   public async login(email: string, password: string): Promise<UserInfo> {
     try {
-      const loginResponse = await this.client.post<any, UserInfo, LoginData>(
-        '/login',
-        {
-          email,
-          password,
-        }
-      );
+      const loginResponse = await this.client.post<
+        UserInfo,
+        AxiosResponse<UserInfo>,
+        LoginData
+      >('/login', {
+        email,
+        password,
+      });
 
-      return loginResponse;
+      return loginResponse.data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -46,8 +48,8 @@ class AuthService extends BaseService {
   ): Promise<UserInfo> {
     try {
       const registerResponse = await this.client.post<
-        any,
         UserInfo,
+        AxiosResponse<UserInfo>,
         RegisterData
       >('/register', {
         email,
@@ -55,7 +57,7 @@ class AuthService extends BaseService {
         password,
       });
 
-      return registerResponse;
+      return registerResponse.data;
     } catch (error) {
       console.error(error);
       throw error;

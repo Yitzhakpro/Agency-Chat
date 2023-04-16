@@ -1,7 +1,10 @@
-import { useState } from 'react';
-import { Auth } from '../../services';
+import { useContext, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import AuthContext from '../../context';
 
 function Register(): JSX.Element {
+  const { isLoggedIn, register } = useContext(AuthContext);
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -28,8 +31,12 @@ function Register(): JSX.Element {
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
-    await Auth.register(email, username, password);
+    await register(email, username, password);
   };
+
+  if (isLoggedIn) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <form onSubmit={handleSubmitRegister}>
