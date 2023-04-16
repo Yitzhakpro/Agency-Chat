@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Auth } from '../services';
-import AuthContext from '../context';
+import { AuthContext } from '../context';
 import type { UserStateInfo } from '../types';
 
 interface IAuthProviderProps {

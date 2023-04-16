@@ -1,9 +1,9 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import AuthContext from '../../context';
+import { useAuth } from '../../hooks';
 
 function Login(): JSX.Element {
-  const { isLoggedIn, login } = useContext(AuthContext);
+  const { isLoggedIn, login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
