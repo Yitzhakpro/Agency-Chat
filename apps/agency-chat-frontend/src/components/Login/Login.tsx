@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Login(): JSX.Element {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, login } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -24,11 +26,18 @@ function Login(): JSX.Element {
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
-    await login(email, password);
+
+    const loggedInSuccessfully = await login(email, password);
+    if (loggedInSuccessfully) {
+      const { state } = location;
+      const returnTo = state && state.from ? state.from.pathname ?? '/' : '/';
+
+      navigate(returnTo, { replace: true });
+    }
   };
 
   if (isLoggedIn) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return (

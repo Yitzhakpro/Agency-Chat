@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Register(): JSX.Element {
+  const navigate = useNavigate();
   const { isLoggedIn, register } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -31,11 +32,15 @@ function Register(): JSX.Element {
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
-    await register(email, username, password);
+
+    const registeredSuccessfully = await register(email, username, password);
+    if (registeredSuccessfully) {
+      navigate('/');
+    }
   };
 
   if (isLoggedIn) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return (
