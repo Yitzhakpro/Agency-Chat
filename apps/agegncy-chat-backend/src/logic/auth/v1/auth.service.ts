@@ -18,7 +18,7 @@ export class AuthService {
     const { id, username, role } = userInfo;
 
     const payload = { id, username, role };
-    const token = await this.jwtService.signAsync(payload);
+    const token = await this.jwtService.signAsync(payload, { expiresIn: '1d' }); // TODO: change Hard-Coded expire
 
     return token;
   }

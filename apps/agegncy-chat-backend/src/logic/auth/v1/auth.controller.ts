@@ -63,4 +63,12 @@ export class AuthController {
     response.setCookie(this.cookieName, token, this.cookieOptions);
     return userInfo;
   }
+
+  @Get('logout')
+  async logout(@Res({ passthrough: true }) response: FastifyReply) {
+    // TODO: later think if needed invalidation of tokens
+    response.clearCookie(this.cookieName);
+
+    return 'Ok';
+  }
 }

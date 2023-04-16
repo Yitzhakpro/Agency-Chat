@@ -132,7 +132,17 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
   };
 
   const logout = async () => {
-    console.log('test');
+    await Auth.logout();
+
+    setUserInfo({
+      isLoggedIn: false,
+      id: '',
+      email: '',
+      username: '',
+      role: 'USER',
+      createdAt: new Date(),
+    });
+
     return true;
   };
 

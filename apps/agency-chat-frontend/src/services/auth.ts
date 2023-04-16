@@ -66,9 +66,7 @@ class AuthService extends BaseService {
 
   public async logout() {
     try {
-      const logoutResponse = await this.client.get('/logout');
-
-      console.log(logoutResponse);
+      await this.client.get('/logout');
     } catch (error) {
       console.error(error);
       throw error;
