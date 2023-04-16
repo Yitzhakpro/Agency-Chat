@@ -15,6 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@agency-chat/agency-chat-backend/util": [
+        "libs/agency-chat-backend/util/src/index.ts"
+      ],
+      "@agency-chat/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
+      "@agency-chat/shared/util-hashing": [
+        "libs/shared/util-hashing/src/index.ts"
+      ],
       "@agency-chat/shared/util-http-client": [
         "libs/shared/util-http-client/src/index.ts"
       ]

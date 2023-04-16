@@ -1,0 +1,64 @@
+{
+  "name": "agegncy-chat-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/agegncy-chat-backend/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/agegncy-chat-backend",
+        "main": "apps/agegncy-chat-backend/src/main.ts",
+        "tsConfig": "apps/agegncy-chat-backend/tsconfig.app.json",
+        "assets": ["apps/agegncy-chat-backend/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/agegncy-chat-backend/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "agegncy-chat-backend:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "agegncy-chat-backend:build:development"
+        },
+        "production": {
+          "buildTarget": "agegncy-chat-backend:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/agegncy-chat-backend/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/agegncy-chat-backend/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
