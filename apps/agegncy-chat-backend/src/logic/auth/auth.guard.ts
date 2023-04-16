@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import type { FastifyRequest } from 'fastify';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { TokenInfo } from '../../types';
 
 @Injectable()
@@ -30,6 +30,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: FastifyRequest = context.switchToHttp().getRequest();
+    const response: FastifyReply = context.switchToHttp().getResponse();
     const token = this.extractTokenFromRequest(request);
     if (!token) {
       throw new UnauthorizedException();
@@ -43,6 +44,7 @@ export class AuthGuard implements CanActivate {
 
       request['user'] = payload;
     } catch {
+      response.clearCookie(this.cookieName);
       throw new UnauthorizedException();
     }
 
