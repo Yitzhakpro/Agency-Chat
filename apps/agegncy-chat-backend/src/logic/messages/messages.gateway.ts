@@ -11,7 +11,8 @@ import type { Server, Socket } from 'socket.io';
 
 @WebSocketGateway(8081, {
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
+    credentials: true,
   },
 })
 export class MessagesGateway

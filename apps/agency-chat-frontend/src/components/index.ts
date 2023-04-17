@@ -4,5 +4,16 @@ import Homepage from './Homepage';
 import NotFound from './NotFound';
 import Layout from './Layout';
 import ProtectedLayout from './ProtectedLayout';
+import ChatLayout from './ChatLayout';
+import Room from './Room';
 
-export { Login, Register, Homepage, NotFound, Layout, ProtectedLayout };
+export {
+  Login,
+  Register,
+  Homepage,
+  NotFound,
+  Layout,
+  ProtectedLayout,
+  ChatLayout,
+  Room,
+};
