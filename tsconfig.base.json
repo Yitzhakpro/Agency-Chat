@@ -24,6 +24,9 @@
       ],
       "@agency-chat/shared/util-http-client": [
         "libs/shared/util-http-client/src/index.ts"
+      ],
+      "@agency-chat/shared/util-socket-client": [
+        "libs/shared/util-socket-client/src/index.ts"
       ]
     }
   },
