@@ -18,6 +18,7 @@
       "@agency-chat/agency-chat-backend/util": [
         "libs/agency-chat-backend/util/src/index.ts"
       ],
+      "@agency-chat/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@agency-chat/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
       "@agency-chat/shared/util-hashing": [
         "libs/shared/util-hashing/src/index.ts"
