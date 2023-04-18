@@ -3,14 +3,22 @@ import {
   WebSocketServer,
   ConnectedSocket,
   SubscribeMessage,
+  MessageBody,
 } from '@nestjs/websockets';
-import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
+import {
+  CLIENT_MESSAGES,
+  SERVER_MESSAGES,
+} from '@agency-chat/shared/constants';
 import type {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
-import type { GetRoomsReturn } from '@agency-chat/shared/interfaces';
+import type {
+  CreateRoomReturn,
+  GetRoomsReturn,
+  JoinRoomReturn,
+} from '@agency-chat/shared/interfaces';
 
 // TODO: add config to gateway
 // TODO: add auth to sockets
@@ -32,6 +40,7 @@ export class MessagesGateway
     );
   }
 
+  // TODO: send dis message to chat rooms
   handleDisconnect(@ConnectedSocket() client: Socket) {
     console.log(
       `user ${client.id} with socket ${client.id} with device ${client.handshake?.query?.deviceId} DISCONNECTED`
@@ -54,5 +63,43 @@ export class MessagesGateway
       });
 
     return filteredList;
+  }
+
+  @SubscribeMessage(CLIENT_MESSAGES.CREATE_ROOM)
+  handleCreateRoom(
+    @MessageBody() roomName: string,
+    @ConnectedSocket() client: Socket
+  ): CreateRoomReturn {
+    // TODO: add reason
+    if (this.doesRoomExist(roomName)) {
+      return false;
+    }
+
+    client.join(roomName);
+
+    return true;
+  }
+
+  @SubscribeMessage(CLIENT_MESSAGES.JOIN_ROOM)
+  handleJoinRoom(
+    @MessageBody() roomName: string,
+    @ConnectedSocket() client: Socket
+  ): JoinRoomReturn {
+    // TODO: add reason
+    if (!this.doesRoomExist(roomName)) {
+      return false;
+    }
+
+    client.join(roomName);
+
+    this.server.to(roomName).emit(SERVER_MESSAGES.USER_JOINED, client.id);
+
+    return true;
+  }
+
+  private doesRoomExist(roomName: string): boolean {
+    const allRooms = this.server.of('/').adapter.rooms;
+
+    return allRooms.has(roomName);
   }
 }

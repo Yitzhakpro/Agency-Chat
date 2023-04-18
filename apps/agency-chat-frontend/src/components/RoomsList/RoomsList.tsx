@@ -10,7 +10,7 @@ function RoomsList(props: IRoomsListProps): JSX.Element {
   return (
     <>
       {rooms.map((roomName) => {
-        return <RoomItem roomName={roomName} />;
+        return <RoomItem key={roomName} roomName={roomName} />;
       })}
     </>
   );
