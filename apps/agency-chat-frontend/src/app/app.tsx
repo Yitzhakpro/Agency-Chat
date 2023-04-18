@@ -7,6 +7,7 @@ import {
   Layout,
   ProtectedLayout,
   ChatLayout,
+  RoomsPage,
   Room,
 } from '../components';
 import { AuthProvider } from '../providers';
@@ -23,6 +24,7 @@ export function App() {
           <Route path="/register" element={<Register />} />
           <Route element={<ProtectedLayout />}>
             <Route element={<ChatLayout />}>
+              <Route path="/rooms" element={<RoomsPage />} />
               <Route path="/room/:roomId" element={<Room />} />
             </Route>
           </Route>

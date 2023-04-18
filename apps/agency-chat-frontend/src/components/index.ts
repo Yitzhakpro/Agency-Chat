@@ -5,6 +5,7 @@ import NotFound from './NotFound';
 import Layout from './Layout';
 import ProtectedLayout from './ProtectedLayout';
 import ChatLayout from './ChatLayout';
+import RoomsPage from './RoomsPage';
 import Room from './Room';
 
 export {
@@ -15,5 +16,6 @@ export {
   Layout,
   ProtectedLayout,
   ChatLayout,
+  RoomsPage,
   Room,
 };
