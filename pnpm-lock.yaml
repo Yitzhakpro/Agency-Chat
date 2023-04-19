@@ -49,6 +49,9 @@ dependencies:
   class-validator:
     specifier: ^0.14.0
     version: 0.14.0
+  cookie:
+    specifier: ^0.5.0
+    version: 0.5.0
   fastify:
     specifier: ^4.15.0
     version: 4.15.0
@@ -120,6 +123,9 @@ devDependencies:
   '@types/bcrypt':
     specifier: ^5.0.0
     version: 5.0.0
+  '@types/cookie':
+    specifier: ^0.5.1
+    version: 0.5.1
   '@types/jest':
     specifier: ^29.4.0
     version: 29.4.0
@@ -3708,6 +3714,10 @@ packages:
 
   /@types/cookie@0.4.1:
     resolution: {integrity: sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==}
+
+  /@types/cookie@0.5.1:
+    resolution: {integrity: sha512-COUnqfB2+ckwXXSFInsFdOAWQzCCx+a5hq2ruyj+Vjund94RJQd4LG2u9hnvJrTgunKAaax7ancBYlDrNYxA0g==}
+    dev: true
 
   /@types/cors@2.8.13:
     resolution: {integrity: sha512-RG8AStHlUiV5ysZQKq97copd2UmVYw3/pRMLefISZ3S1hK104Cwm7iLQ3fTKx+lsUH2CE8FlLaYeEA2LSeqYUA==}

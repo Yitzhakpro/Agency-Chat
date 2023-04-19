@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
   private tokenSecret: string;
 
   constructor(
-    private readonly jwtSerivce: JwtService,
+    private readonly jwtService: JwtService,
     private readonly configService: ConfigService
   ) {
     this.cookieName = configService.get<string>('auth.cookie.name');
@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
 
     // TODO: validate token body
     try {
-      const payload: TokenInfo = await this.jwtSerivce.verifyAsync(token, {
+      const payload: TokenInfo = await this.jwtService.verifyAsync(token, {
         secret: this.tokenSecret,
       });
 

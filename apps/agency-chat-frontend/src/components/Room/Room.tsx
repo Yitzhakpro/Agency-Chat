@@ -1,11 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
+import {
+  CLIENT_MESSAGES,
+  SERVER_MESSAGES,
+} from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import type { JoinRoomReturn } from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
+
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
     if (roomId) {
@@ -20,7 +26,50 @@ function Room(): JSX.Element {
     }
   }, [roomId]);
 
-  return <h1>{roomId}</h1>;
+  useEffect(() => {
+    // ?: think about moving it outside
+    function updateMessages(msg: string) {
+      setMessages((prevMessages) => [...prevMessages, msg]);
+    }
+
+    MessageClient.on(SERVER_MESSAGES.USER_SENT_MESSAGE, updateMessages);
+
+    return () => {
+      MessageClient.off(SERVER_MESSAGES.USER_SENT_MESSAGE, updateMessages);
+    };
+  }, []);
+
+  const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+
+    MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
+    setMessages((prevMessages) => [...prevMessages, message]);
+    setMessage('');
+  };
+
+  return (
+    <div>
+      <h1>room: {roomId}</h1>
+
+      {messages.map((msg) => {
+        return (
+          <div>
+            <p>{msg}</p>
+          </div>
+        );
+      })}
+
+      <form onSubmit={handleSendMessage}>
+        <input
+          type="text"
+          placeholder="message here"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  );
 }
 
 export default Room;
