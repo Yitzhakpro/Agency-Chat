@@ -7,6 +7,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import fastifyCookie from '@fastify/cookie';
+import { SocketIOAdapter } from '@agency-chat/agency-chat-backend/util';
 import { AppModule } from './app/app.module';
 import type { CorsOptions } from './config';
 
@@ -31,6 +32,8 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+
+  app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
 
   const config = new DocumentBuilder()
     .setTitle('Agency Chat Backend')

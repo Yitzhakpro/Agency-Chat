@@ -29,13 +29,8 @@ import type {
 import type { TokenInfo } from '../../types';
 import type { AuthenticatedSocket } from '../../types';
 
-// TODO: add config to gateway
-@WebSocketGateway(8081, {
-  cors: {
-    origin: 'http://localhost:3000',
-    credentials: true,
-  },
-})
+// TODO: disable multiple same login
+@WebSocketGateway(8081)
 export class MessagesGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -163,7 +158,7 @@ export class MessagesGateway
     client: Socket,
     next: (err?: Error) => void
   ) {
-    const cookies = client.handshake.headers.cookie;
+    const cookies = client.handshake.headers.cookie || '';
     const parsedCookies = cookie.parse(cookies);
     const token = parsedCookies[this.cookieName];
 
