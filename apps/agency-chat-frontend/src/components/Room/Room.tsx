@@ -5,13 +5,13 @@ import {
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import type { JoinRoomReturn } from '@agency-chat/shared/interfaces';
+import type { JoinRoomReturn, Message } from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
 
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     if (roomId) {
@@ -28,7 +28,7 @@ function Room(): JSX.Element {
 
   useEffect(() => {
     // ?: think about moving it outside
-    function updateMessages(msg: string) {
+    function updateMessages(msg: Message) {
       setMessages((prevMessages) => [...prevMessages, msg]);
     }
 
@@ -39,11 +39,11 @@ function Room(): JSX.Element {
     };
   }, []);
 
+  // TODO: indicate failure of sending
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
     MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
-    setMessages((prevMessages) => [...prevMessages, message]);
     setMessage('');
   };
 
@@ -52,9 +52,15 @@ function Room(): JSX.Element {
       <h1>room: {roomId}</h1>
 
       {messages.map((msg) => {
+        const { id, username, role, text, timestamp } = msg;
+
         return (
           <div>
-            <p>{msg}</p>
+            <p>{id}</p>
+            <p>{username}</p>
+            <p>{role}</p>
+            <p>{text}</p>
+            <p>{timestamp.toString()}</p>
           </div>
         );
       })}

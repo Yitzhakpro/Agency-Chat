@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import cookie from 'cookie';
+import { nanoid } from 'nanoid';
 import {
   CLIENT_MESSAGES,
   SERVER_MESSAGES,
@@ -23,6 +24,7 @@ import type {
   CreateRoomReturn,
   GetRoomsReturn,
   JoinRoomReturn,
+  Message,
 } from '@agency-chat/shared/interfaces';
 import type { TokenInfo } from '../../types';
 import type { AuthenticatedSocket } from '../../types';
@@ -144,8 +146,17 @@ export class MessagesGateway
       `${id}-${username} [${role}] sent: ${message} to room: ${currentRoom}`
     );
 
-    // TODO: later add who sent...
-    client.to(currentRoom).emit(SERVER_MESSAGES.USER_SENT_MESSAGE, message);
+    const newMessage: Message = {
+      id: nanoid(),
+      username,
+      role,
+      text: message,
+      timestamp: new Date(),
+    };
+
+    this.server
+      .to(currentRoom)
+      .emit(SERVER_MESSAGES.USER_SENT_MESSAGE, newMessage);
   }
 
   private async initUserInitialization(
