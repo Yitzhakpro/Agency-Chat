@@ -25,9 +25,9 @@ import type {
   JoinRoomReturn,
 } from '@agency-chat/shared/interfaces';
 import type { TokenInfo } from '../../types';
+import type { AuthenticatedSocket } from '../../types';
 
 // TODO: add config to gateway
-// TODO: add auth to sockets
 @WebSocketGateway(8081, {
   cors: {
     origin: 'http://localhost:3000',
@@ -54,21 +54,26 @@ export class MessagesGateway
     server.use(this.initUserInitialization.bind(this));
   }
 
-  handleConnection(@ConnectedSocket() client: Socket, ...args: any[]) {
-    console.log(
-      `user ${client.id} with socket ${client.id} connected with device ${client.handshake?.query?.deviceId}`
-    );
+  handleConnection(
+    @ConnectedSocket() client: AuthenticatedSocket,
+    ...args: any[]
+  ) {
+    const { id, username, role } = client.data.user;
+
+    console.log(`${id}-${username} [${role}] connected`);
   }
 
   // TODO: send dis message to chat rooms
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    console.log(
-      `user ${client.id} with socket ${client.id} with device ${client.handshake?.query?.deviceId} DISCONNECTED`
-    );
+  handleDisconnect(@ConnectedSocket() client: AuthenticatedSocket) {
+    const { id, username, role } = client.data.user;
+
+    console.log(`${id}-${username} [${role}] disconnected`);
   }
 
   @SubscribeMessage(CLIENT_MESSAGES.GET_ROOMS)
-  handleGetRooms(@ConnectedSocket() _client: Socket): GetRoomsReturn {
+  handleGetRooms(
+    @ConnectedSocket() _client: AuthenticatedSocket
+  ): GetRoomsReturn {
     const allRooms = Array.from(this.server.of('/').adapter.rooms);
     const filteredList = allRooms
       .filter(([roomKey, roomUsers]) => {
@@ -88,29 +93,38 @@ export class MessagesGateway
   @SubscribeMessage(CLIENT_MESSAGES.CREATE_ROOM)
   handleCreateRoom(
     @MessageBody() roomName: string,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: AuthenticatedSocket
   ): CreateRoomReturn {
+    const { id, username, role } = client.data.user;
+
     // TODO: add reason
     if (this.doesRoomExist(roomName)) {
       return false;
     }
+
+    console.log(`${id}-${username} [${role}] created room: ${roomName}`);
 
     client.join(roomName);
 
     return true;
   }
 
+  // TODO: fix multiple events
   @SubscribeMessage(CLIENT_MESSAGES.JOIN_ROOM)
   handleJoinRoom(
     @MessageBody() roomName: string,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: AuthenticatedSocket
   ): JoinRoomReturn {
+    const { id, username, role } = client.data.user;
+
     // TODO: add reason
     if (!this.doesRoomExist(roomName)) {
       return false;
     }
 
     client.join(roomName);
+
+    console.log(`${id}-${username} [${role}] joined room: ${roomName}`);
 
     this.server.to(roomName).emit(SERVER_MESSAGES.USER_JOINED, client.id);
 
@@ -120,11 +134,15 @@ export class MessagesGateway
   @SubscribeMessage(CLIENT_MESSAGES.SEND_MESSAGE)
   handleSendMessage(
     @MessageBody() message: string,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: AuthenticatedSocket
   ) {
+    const { id, username, role } = client.data.user;
+
     const currentRoom = [...client.rooms][1];
     // TODO: create better log system
-    console.log(`${client.id} sent to ${currentRoom}: ${message}`);
+    console.log(
+      `${id}-${username} [${role}] sent: ${message} to room: ${currentRoom}`
+    );
 
     // TODO: later add who sent...
     client.to(currentRoom).emit(SERVER_MESSAGES.USER_SENT_MESSAGE, message);
