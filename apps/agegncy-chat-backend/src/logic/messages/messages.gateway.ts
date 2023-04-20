@@ -30,7 +30,6 @@ import type { TokenInfo } from '../../types';
 import type { AuthenticatedSocket } from '../../types';
 
 // TODO: disable multiple same login
-// TODO: handle only 1 room join
 @WebSocketGateway(8081)
 export class MessagesGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -99,6 +98,10 @@ export class MessagesGateway
     if (this.doesRoomExist(roomName)) {
       return false;
     }
+    // TODO: add reason
+    if (this.isAlreadyInARoom(client)) {
+      return false;
+    }
 
     console.log(`${id}-${username} [${role}] created room: ${roomName}`);
 
@@ -119,9 +122,12 @@ export class MessagesGateway
     if (!this.doesRoomExist(roomName)) {
       return false;
     }
-
     // TODO: add reason
     if (this.isUserInRoom(client, roomName)) {
+      return false;
+    }
+    // TODO: add reason
+    if (this.isAlreadyInARoom(client)) {
       return false;
     }
 
@@ -171,7 +177,7 @@ export class MessagesGateway
   private async initUserInitialization(
     client: Socket,
     next: (err?: Error) => void
-  ) {
+  ): Promise<void> {
     const cookies = client.handshake.headers.cookie || '';
     const parsedCookies = cookie.parse(cookies);
     const token = parsedCookies[this.cookieName];
@@ -199,9 +205,17 @@ export class MessagesGateway
     return allRooms.has(roomName);
   }
 
-  private isUserInRoom(client: AuthenticatedSocket, roomName: string) {
+  // TODO: later use username or stronger id
+  private isUserInRoom(client: AuthenticatedSocket, roomName: string): boolean {
     const clientRooms = [...client.rooms];
 
     return clientRooms.indexOf(roomName) !== -1;
+  }
+
+  // TODO: later use username or stronger id
+  private isAlreadyInARoom(client: AuthenticatedSocket): boolean {
+    const clientRooms = [...client.rooms];
+
+    return clientRooms.length === 2;
   }
 }

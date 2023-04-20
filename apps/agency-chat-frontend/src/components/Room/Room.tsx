@@ -7,6 +7,7 @@ import {
 import { MessageClient } from '../../services';
 import type { JoinRoomReturn, Message } from '@agency-chat/shared/interfaces';
 
+// TODO: here just check connection instead of join
 function Room(): JSX.Element {
   const { roomId } = useParams();
 
