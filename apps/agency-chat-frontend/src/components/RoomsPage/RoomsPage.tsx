@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import RoomsList from '../RoomsList';
-import type { GetRoomsReturn, CreateRoomReturn } from '@agency-chat/shared/interfaces';
+import type {
+  GetRoomsReturn,
+  CreateRoomReturn,
+} from '@agency-chat/shared/interfaces';
 
 function RoomsPage(): JSX.Element {
   const navigate = useNavigate();

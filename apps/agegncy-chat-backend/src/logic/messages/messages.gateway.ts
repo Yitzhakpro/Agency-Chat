@@ -30,6 +30,7 @@ import type { TokenInfo } from '../../types';
 import type { AuthenticatedSocket } from '../../types';
 
 // TODO: disable multiple same login
+// TODO: handle only 1 room join
 @WebSocketGateway(8081)
 export class MessagesGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -106,7 +107,7 @@ export class MessagesGateway
     return true;
   }
 
-  // TODO: fix multiple events
+  // TODO: handle already connected to a room
   @SubscribeMessage(CLIENT_MESSAGES.JOIN_ROOM)
   handleJoinRoom(
     @MessageBody() roomName: string,
@@ -119,11 +120,25 @@ export class MessagesGateway
       return false;
     }
 
+    // TODO: add reason
+    if (this.isUserInRoom(client, roomName)) {
+      return false;
+    }
+
     client.join(roomName);
 
     console.log(`${id}-${username} [${role}] joined room: ${roomName}`);
 
-    this.server.to(roomName).emit(SERVER_MESSAGES.USER_JOINED, client.id);
+    const joinedMessaged: Message = {
+      type: 'user_joined',
+      id: nanoid(),
+      username,
+      role,
+      text: `${username} has joined the room`,
+      timestamp: new Date(),
+    };
+
+    this.server.to(roomName).emit(SERVER_MESSAGES.MESSAGE_SENT, joinedMessaged);
 
     return true;
   }
@@ -142,6 +157,7 @@ export class MessagesGateway
     );
 
     const newMessage: Message = {
+      type: 'message',
       id: nanoid(),
       username,
       role,
@@ -149,9 +165,7 @@ export class MessagesGateway
       timestamp: new Date(),
     };
 
-    this.server
-      .to(currentRoom)
-      .emit(SERVER_MESSAGES.USER_SENT_MESSAGE, newMessage);
+    this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, newMessage);
   }
 
   private async initUserInitialization(
@@ -183,5 +197,11 @@ export class MessagesGateway
     const allRooms = this.server.of('/').adapter.rooms;
 
     return allRooms.has(roomName);
+  }
+
+  private isUserInRoom(client: AuthenticatedSocket, roomName: string) {
+    const clientRooms = [...client.rooms];
+
+    return clientRooms.indexOf(roomName) !== -1;
   }
 }

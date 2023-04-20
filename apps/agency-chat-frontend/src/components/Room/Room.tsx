@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   CLIENT_MESSAGES,
@@ -13,14 +13,18 @@ function Room(): JSX.Element {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const connected = useRef(false);
+
   useEffect(() => {
-    if (roomId) {
+    if (roomId && !connected.current) {
       // TODO: handle failure
       MessageClient.emit(
         CLIENT_MESSAGES.JOIN_ROOM,
         roomId,
         (isSuccess: JoinRoomReturn) => {
-          //
+          if (isSuccess) {
+            connected.current = true;
+          }
         }
       );
     }
@@ -32,10 +36,10 @@ function Room(): JSX.Element {
       setMessages((prevMessages) => [...prevMessages, msg]);
     }
 
-    MessageClient.on(SERVER_MESSAGES.USER_SENT_MESSAGE, updateMessages);
+    MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
 
     return () => {
-      MessageClient.off(SERVER_MESSAGES.USER_SENT_MESSAGE, updateMessages);
+      MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
     };
   }, []);
 
@@ -55,7 +59,7 @@ function Room(): JSX.Element {
         const { id, username, role, text, timestamp } = msg;
 
         return (
-          <div>
+          <div key={id}>
             <p>{id}</p>
             <p>{username}</p>
             <p>{role}</p>
