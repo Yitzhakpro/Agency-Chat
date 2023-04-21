@@ -152,6 +152,11 @@ export class MessagesGateway
     return { success: true };
   }
 
+  @SubscribeMessage(CLIENT_MESSAGES.LEAVE_ROOM)
+  handleLeaveRoom(@ConnectedSocket() client: AuthenticatedSocket): void {
+    this.onClientLeft(client, 'LEFT_ROOM');
+  }
+
   @SubscribeMessage(CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM)
   handleIsConnectedToRoom(
     @MessageBody() roomName: string,

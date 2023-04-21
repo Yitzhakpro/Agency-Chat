@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   CLIENT_MESSAGES,
@@ -13,6 +13,8 @@ function Room(): JSX.Element {
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const readyToLeave = useRef(false);
 
   useEffect(() => {
     if (roomId) {
@@ -41,6 +43,16 @@ function Room(): JSX.Element {
 
     return () => {
       MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (readyToLeave.current) {
+        MessageClient.emit(CLIENT_MESSAGES.LEAVE_ROOM);
+      } else {
+        readyToLeave.current = true;
+      }
     };
   }, []);
 
