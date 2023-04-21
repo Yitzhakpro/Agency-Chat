@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   CLIENT_MESSAGES,
@@ -14,20 +14,15 @@ function Room(): JSX.Element {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const connected = useRef(false);
-
   useEffect(() => {
-    if (roomId && !connected.current) {
+    if (roomId) {
       MessageClient.emit(
         CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM,
         roomId,
         (status: StatusReturn) => {
           const { success, message } = status;
 
-          if (success) {
-            // TODO: rethink
-            connected.current = true;
-          } else {
+          if (!success) {
             alert(`Cant connect to this room, reason: ${message}`);
             navigate('/rooms');
           }

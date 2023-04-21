@@ -57,9 +57,10 @@ export class MessagesGateway
     const { id, username, role } = client.data.user;
 
     console.log(`${id}-${username} [${role}] connected`);
+
+    client.on('disconnecting', (reason) => this.onClientLeft(client, reason));
   }
 
-  // TODO: send dis message to chat rooms
   handleDisconnect(@ConnectedSocket() client: AuthenticatedSocket) {
     const { id, username, role } = client.data.user;
 
@@ -120,7 +121,6 @@ export class MessagesGateway
     if (!this.doesRoomExist(roomName)) {
       return { success: false, message: 'Room does not exist' };
     }
-    // TODO: think if neccesery
     if (this.isUserInRoom(client, roomName)) {
       return {
         success: false,
@@ -173,6 +173,10 @@ export class MessagesGateway
   ): void {
     const { id, username, role } = client.data.user;
 
+    if (!this.isAlreadyInARoom(client)) {
+      return;
+    }
+
     const currentRoom = [...client.rooms][1];
     // TODO: create better log system
     console.log(
@@ -214,6 +218,30 @@ export class MessagesGateway
     }
 
     next();
+  }
+
+  private async onClientLeft(client: AuthenticatedSocket, _reason: string) {
+    const { id, username, role } = client.data.user;
+    if (this.isAlreadyInARoom(client)) {
+      const roomName = [...client.rooms][1];
+
+      console.log(
+        `${id}-${username} [${role}] disconnected from room: ${roomName}`
+      );
+
+      const disconnectMessage: Message = {
+        type: 'user_left',
+        id: nanoid(),
+        username,
+        role,
+        text: `${username} has left the room`,
+        timestamp: new Date(),
+      };
+
+      this.server
+        .to(roomName)
+        .emit(SERVER_MESSAGES.MESSAGE_SENT, disconnectMessage);
+    }
   }
 
   private doesRoomExist(roomName: string): boolean {
