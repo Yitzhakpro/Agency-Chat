@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import type { JoinRoomReturn } from '@agency-chat/shared/interfaces';
+import type { StatusReturn } from '@agency-chat/shared/interfaces';
 
 interface IRoomItemProps {
   roomName: string;
@@ -16,12 +16,14 @@ function RoomItem(props: IRoomItemProps): JSX.Element {
     MessageClient.emit(
       CLIENT_MESSAGES.JOIN_ROOM,
       roomName,
-      (isSuccess: JoinRoomReturn) => {
-        if (isSuccess) {
+      (status: StatusReturn) => {
+        const { success, message } = status;
+
+        if (success) {
           navigate(`/room/${roomName}`);
         } else {
           // TODO: better error visual
-          alert(`Can't connect to room: ${roomName}`);
+          alert(`Can't connect to room: ${roomName}, reason: ${message}`);
         }
       }
     );

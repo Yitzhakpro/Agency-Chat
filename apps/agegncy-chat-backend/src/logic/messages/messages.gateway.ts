@@ -21,11 +21,9 @@ import type {
 } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
 import type {
-  CreateRoomReturn,
   GetRoomsReturn,
-  IsConnectedToRoomReturn,
-  JoinRoomReturn,
   Message,
+  StatusReturn,
 } from '@agency-chat/shared/interfaces';
 import type { TokenInfo } from '../../types';
 import type { AuthenticatedSocket } from '../../types';
@@ -92,44 +90,48 @@ export class MessagesGateway
   handleCreateRoom(
     @MessageBody() roomName: string,
     @ConnectedSocket() client: AuthenticatedSocket
-  ): CreateRoomReturn {
+  ): StatusReturn {
     const { id, username, role } = client.data.user;
 
-    // TODO: add reason
     if (this.doesRoomExist(roomName)) {
-      return false;
+      return { success: false, message: 'Room already exist' };
     }
-    // TODO: add reason
     if (this.isAlreadyInARoom(client)) {
-      return false;
+      return {
+        success: false,
+        message: 'you are already in 1 room, refresh please',
+      };
     }
 
     console.log(`${id}-${username} [${role}] created room: ${roomName}`);
 
     client.join(roomName);
 
-    return true;
+    return { success: true };
   }
 
-  // TODO: handle already connected to a room
   @SubscribeMessage(CLIENT_MESSAGES.JOIN_ROOM)
   handleJoinRoom(
     @MessageBody() roomName: string,
     @ConnectedSocket() client: AuthenticatedSocket
-  ): JoinRoomReturn {
+  ): StatusReturn {
     const { id, username, role } = client.data.user;
 
-    // TODO: add reason
     if (!this.doesRoomExist(roomName)) {
-      return false;
+      return { success: false, message: 'Room does not exist' };
     }
-    // TODO: add reason
+    // TODO: think if neccesery
     if (this.isUserInRoom(client, roomName)) {
-      return false;
+      return {
+        success: false,
+        message: 'You are already in this room, please refresh',
+      };
     }
-    // TODO: add reason
     if (this.isAlreadyInARoom(client)) {
-      return false;
+      return {
+        success: false,
+        message: 'You are already in a room, please refresh',
+      };
     }
 
     client.join(roomName);
@@ -147,16 +149,21 @@ export class MessagesGateway
 
     this.server.to(roomName).emit(SERVER_MESSAGES.MESSAGE_SENT, joinedMessaged);
 
-    return true;
+    return { success: true };
   }
 
   @SubscribeMessage(CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM)
   handleIsConnectedToRoom(
     @MessageBody() roomName: string,
     @ConnectedSocket() client: AuthenticatedSocket
-  ): IsConnectedToRoomReturn {
-    // TODO: add reason
-    return this.isUserInRoom(client, roomName);
+  ): StatusReturn {
+    if (!this.doesRoomExist(roomName)) {
+      return { success: false, message: 'Room does not exist' };
+    } else if (!this.isUserInRoom(client, roomName)) {
+      return { success: false, message: 'You are not connected to this room' };
+    }
+
+    return { success: true };
   }
 
   @SubscribeMessage(CLIENT_MESSAGES.SEND_MESSAGE)

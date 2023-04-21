@@ -5,10 +5,7 @@ import {
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import type {
-  IsConnectedToRoomReturn,
-  Message,
-} from '@agency-chat/shared/interfaces';
+import type { StatusReturn, Message } from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
@@ -24,12 +21,14 @@ function Room(): JSX.Element {
       MessageClient.emit(
         CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM,
         roomId,
-        (isSuccess: IsConnectedToRoomReturn) => {
-          if (isSuccess) {
+        (status: StatusReturn) => {
+          const { success, message } = status;
+
+          if (success) {
             // TODO: rethink
             connected.current = true;
           } else {
-            alert('Cant connect to this room');
+            alert(`Cant connect to this room, reason: ${message}`);
             navigate('/rooms');
           }
         }

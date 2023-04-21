@@ -1,12 +1,11 @@
-import { Role } from './user-interfaces';
+import type { Role } from './user-interfaces';
 
 export type GetRoomsReturn = string[];
 
-export type CreateRoomReturn = boolean;
-
-export type JoinRoomReturn = boolean;
-
-export type IsConnectedToRoomReturn = boolean;
+export interface StatusReturn {
+  success: boolean;
+  message?: string;
+}
 
 export type MessageType = 'message' | 'user_joined' | 'user_left';
 

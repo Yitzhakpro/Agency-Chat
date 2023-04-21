@@ -5,7 +5,7 @@ import { MessageClient } from '../../services';
 import RoomsList from '../RoomsList';
 import type {
   GetRoomsReturn,
-  CreateRoomReturn,
+  StatusReturn,
 } from '@agency-chat/shared/interfaces';
 
 function RoomsPage(): JSX.Element {
@@ -29,12 +29,14 @@ function RoomsPage(): JSX.Element {
     MessageClient.emit(
       CLIENT_MESSAGES.CREATE_ROOM,
       createRoomName,
-      (isSuccess: CreateRoomReturn) => {
-        if (isSuccess) {
+      (status: StatusReturn) => {
+        const { success, message } = status;
+
+        if (success) {
           navigate(`/room/${createRoomName}`);
         } else {
           // TODO: better error visual
-          alert(`Can't create room: ${createRoomName}`);
+          alert(`Can't create room: ${createRoomName}, reason: ${message}`);
         }
       }
     );
