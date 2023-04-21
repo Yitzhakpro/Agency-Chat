@@ -23,6 +23,7 @@ import type { Server, Socket } from 'socket.io';
 import type {
   CreateRoomReturn,
   GetRoomsReturn,
+  IsConnectedToRoomReturn,
   JoinRoomReturn,
   Message,
 } from '@agency-chat/shared/interfaces';
@@ -149,11 +150,20 @@ export class MessagesGateway
     return true;
   }
 
+  @SubscribeMessage(CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM)
+  handleIsConnectedToRoom(
+    @MessageBody() roomName: string,
+    @ConnectedSocket() client: AuthenticatedSocket
+  ): IsConnectedToRoomReturn {
+    // TODO: add reason
+    return this.isUserInRoom(client, roomName);
+  }
+
   @SubscribeMessage(CLIENT_MESSAGES.SEND_MESSAGE)
   handleSendMessage(
     @MessageBody() message: string,
     @ConnectedSocket() client: AuthenticatedSocket
-  ) {
+  ): void {
     const { id, username, role } = client.data.user;
 
     const currentRoom = [...client.rooms][1];

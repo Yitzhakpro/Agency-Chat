@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   CLIENT_MESSAGES,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import type { JoinRoomReturn, Message } from '@agency-chat/shared/interfaces';
+import type {
+  IsConnectedToRoomReturn,
+  Message,
+} from '@agency-chat/shared/interfaces';
 
-// TODO: here just check connection instead of join
 function Room(): JSX.Element {
   const { roomId } = useParams();
+  const navigate = useNavigate();
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -18,18 +21,21 @@ function Room(): JSX.Element {
 
   useEffect(() => {
     if (roomId && !connected.current) {
-      // TODO: handle failure
       MessageClient.emit(
-        CLIENT_MESSAGES.JOIN_ROOM,
+        CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM,
         roomId,
-        (isSuccess: JoinRoomReturn) => {
+        (isSuccess: IsConnectedToRoomReturn) => {
           if (isSuccess) {
+            // TODO: rethink
             connected.current = true;
+          } else {
+            alert('Cant connect to this room');
+            navigate('/rooms');
           }
         }
       );
     }
-  }, [roomId]);
+  }, [navigate, roomId]);
 
   useEffect(() => {
     // ?: think about moving it outside

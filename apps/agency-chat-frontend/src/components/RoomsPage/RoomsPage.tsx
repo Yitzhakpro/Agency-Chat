@@ -30,9 +30,11 @@ function RoomsPage(): JSX.Element {
       CLIENT_MESSAGES.CREATE_ROOM,
       createRoomName,
       (isSuccess: CreateRoomReturn) => {
-        // TODO: handle failure
         if (isSuccess) {
           navigate(`/room/${createRoomName}`);
+        } else {
+          // TODO: better error visual
+          alert(`Can't create room: ${createRoomName}`);
         }
       }
     );
