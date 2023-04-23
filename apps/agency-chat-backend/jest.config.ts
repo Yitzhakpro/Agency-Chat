@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'agegncy-chat-backend',
+  displayName: 'agency-chat-backend',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/apps/agegncy-chat-backend',
+  coverageDirectory: '../../coverage/apps/agency-chat-backend',
 };

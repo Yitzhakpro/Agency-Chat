@@ -1,7 +1,7 @@
 {
   "name": "agency-chat-backend-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["agegncy-chat-backend"],
+  "implicitDependencies": ["agency-chat-backend"],
   "targets": {
     "e2e": {
       "executor": "@nrwl/jest:jest",
