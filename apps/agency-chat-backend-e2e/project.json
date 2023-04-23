@@ -1,5 +1,5 @@
 {
-  "name": "agegncy-chat-backend-e2e",
+  "name": "agency-chat-backend-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "implicitDependencies": ["agegncy-chat-backend"],
   "targets": {
@@ -7,7 +7,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],
       "options": {
-        "jestConfig": "apps/agegncy-chat-backend-e2e/jest.config.ts",
+        "jestConfig": "apps/agency-chat-backend-e2e/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -15,7 +15,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/agegncy-chat-backend-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/agency-chat-backend-e2e/**/*.{js,ts}"]
       }
     }
   }
