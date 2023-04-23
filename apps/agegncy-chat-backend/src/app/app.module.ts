@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from '../logic';
+import { AuthModule, MessagesModule } from '../logic';
 import { AppController } from './app.controller';
 import configurations from '../config';
 
@@ -12,6 +12,7 @@ import configurations from '../config';
       load: [configurations],
     }),
     AuthModule,
+    MessagesModule,
   ],
   controllers: [AppController],
 })
