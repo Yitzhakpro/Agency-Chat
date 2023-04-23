@@ -30,7 +30,6 @@ import type {
 import type { TokenInfo } from '../../types';
 import type { AuthenticatedSocket } from '../../types';
 
-// TODO: enforce events typescript
 @WebSocketGateway(8081)
 export class MessagesGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect

@@ -11,7 +11,13 @@ function ChatLayout(): JSX.Element {
       MessageClient.connect();
     }
 
+    MessageClient.on('connect_error', (err) => {
+      console.log(err.message);
+    });
+
     return () => {
+      MessageClient.off('connect_error');
+
       MessageClient.disconnect();
     };
   }, [isLoggedIn]);

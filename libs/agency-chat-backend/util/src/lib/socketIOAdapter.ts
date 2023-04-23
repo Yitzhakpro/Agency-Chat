@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import type { INestApplicationContext } from '@nestjs/common';
 import { ServerOptions } from 'socket.io';
 
-// TODO: think if maybe not need to be in lib
 export class SocketIOAdapter extends IoAdapter {
   constructor(
     private readonly app: INestApplicationContext,
