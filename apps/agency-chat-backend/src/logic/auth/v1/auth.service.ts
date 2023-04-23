@@ -1,7 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '@prisma/client';
-import { LoginData, RegisterData, UserInfo } from '@agency-chat/shared/interfaces';
+import {
+  LoginData,
+  RegisterData,
+  UserInfo,
+} from '@agency-chat/shared/interfaces';
 import { compareHash, hashWithSalt } from '@agency-chat/shared/util-hashing';
 import { getUserInfo } from '@agency-chat/agency-chat-backend/util';
 import { UserService } from '../../user';

@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'agegncy-chat-backend-e2e',
+  displayName: 'agency-chat-backend-e2e',
   preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -15,5 +15,5 @@ export default {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/agegncy-chat-backend-e2e',
+  coverageDirectory: '../../coverage/agency-chat-backend-e2e',
 };
