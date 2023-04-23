@@ -14,12 +14,14 @@ import {
   CLIENT_MESSAGES,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
+import { redisClient } from '../../database/redis';
 import type {
   OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import type { Server, Socket } from 'socket.io';
+import type { RedisClientType } from 'redis';
 import type {
   GetRoomsReturn,
   Message,
@@ -28,7 +30,7 @@ import type {
 import type { TokenInfo } from '../../types';
 import type { AuthenticatedSocket } from '../../types';
 
-// TODO: disable multiple same login
+// TODO: enforce events typescript
 @WebSocketGateway(8081)
 export class MessagesGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -37,6 +39,7 @@ export class MessagesGateway
   public server: Server;
   private cookieName: string;
   private tokenSecret: string;
+  private redisClient: RedisClientType;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -44,9 +47,11 @@ export class MessagesGateway
   ) {
     this.cookieName = configService.get<string>('auth.cookie.name');
     this.tokenSecret = configService.get<string>('auth.token.secret');
+    this.redisClient = redisClient as RedisClientType;
   }
 
-  afterInit(server: Server) {
+  async afterInit(server: Server) {
+    await this.redisClient.connect();
     server.use(this.initUserInitialization.bind(this));
   }
 
@@ -58,6 +63,15 @@ export class MessagesGateway
 
     console.log(`${id}-${username} [${role}] connected`);
 
+    // Renew redis user session lock
+    client.conn.on('packet', async (packet) => {
+      if (client.data.user && packet.type === 'pong') {
+        await this.redisClient.set(`users:${id}`, client.id, {
+          XX: true,
+          EX: 30,
+        });
+      }
+    });
     client.on('disconnecting', (reason) => this.onClientLeft(client, reason));
   }
 
@@ -209,7 +223,7 @@ export class MessagesGateway
     const token = parsedCookies[this.cookieName];
 
     if (!token) {
-      next(new UnauthorizedException());
+      return next(new UnauthorizedException());
     }
 
     try {
@@ -217,16 +231,29 @@ export class MessagesGateway
         secret: this.tokenSecret,
       });
 
+      const { id } = payload;
+
+      // checking if account already logged in
+      const canConnect = await this.redisClient.set(`users:${id}`, client.id, {
+        EX: 30,
+        NX: true,
+      });
+
+      if (!canConnect) {
+        return next(new Error('Already logged in'));
+      }
+
       client.data.user = payload;
     } catch (error) {
-      next(new UnauthorizedException());
+      return next(new UnauthorizedException());
     }
 
-    next();
+    return next();
   }
 
   private async onClientLeft(client: AuthenticatedSocket, _reason: string) {
     const { id, username, role } = client.data.user;
+
     if (this.isAlreadyInARoom(client)) {
       const roomName = [...client.rooms][1];
 
@@ -247,6 +274,11 @@ export class MessagesGateway
         .to(roomName)
         .emit(SERVER_MESSAGES.MESSAGE_SENT, disconnectMessage);
     }
+
+    // remove logged in lock from redis
+    if (client.data.user) {
+      await this.redisClient.del(`users:${id}`);
+    }
   }
 
   private doesRoomExist(roomName: string): boolean {
@@ -255,14 +287,12 @@ export class MessagesGateway
     return allRooms.has(roomName);
   }
 
-  // TODO: later use username or stronger id
   private isUserInRoom(client: AuthenticatedSocket, roomName: string): boolean {
     const clientRooms = [...client.rooms];
 
     return clientRooms.indexOf(roomName) !== -1;
   }
 
-  // TODO: later use username or stronger id
   private isAlreadyInARoom(client: AuthenticatedSocket): boolean {
     const clientRooms = [...client.rooms];
 
