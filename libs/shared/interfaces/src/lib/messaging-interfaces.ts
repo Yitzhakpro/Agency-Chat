@@ -17,3 +17,5 @@ export interface Message {
   text: string;
   timestamp: Date;
 }
+
+export type Command = 'KICK' | 'MUTE' | 'BAN';

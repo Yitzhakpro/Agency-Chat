@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -14,7 +14,8 @@ import {
   CLIENT_MESSAGES,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
-import { redisClient } from '../../database/redis';
+import { sessionClient, userStatusClient } from '../../database/redis';
+import { MessagingGuard } from './messaging.guard';
 import type {
   OnGatewayInit,
   OnGatewayConnection,
@@ -23,6 +24,7 @@ import type {
 import type { Server, Socket } from 'socket.io';
 import type { RedisClientType } from 'redis';
 import type {
+  Command,
   GetRoomsReturn,
   Message,
   StatusReturn,
@@ -38,7 +40,8 @@ export class MessagesGateway
   public server: Server;
   private cookieName: string;
   private tokenSecret: string;
-  private redisClient: RedisClientType;
+  private sessionClient: RedisClientType;
+  private userStatusClient: RedisClientType;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -46,11 +49,13 @@ export class MessagesGateway
   ) {
     this.cookieName = configService.get<string>('auth.cookie.name');
     this.tokenSecret = configService.get<string>('auth.token.secret');
-    this.redisClient = redisClient as RedisClientType;
+    this.sessionClient = sessionClient as RedisClientType;
+    this.userStatusClient = userStatusClient as RedisClientType;
   }
 
   async afterInit(server: Server) {
-    await this.redisClient.connect();
+    await this.sessionClient.connect();
+    await this.userStatusClient.connect();
     server.use(this.initUserInitialization.bind(this));
   }
 
@@ -65,7 +70,7 @@ export class MessagesGateway
     // Renew redis user session lock
     client.conn.on('packet', async (packet) => {
       if (client.data.user && packet.type === 'pong') {
-        await this.redisClient.set(`users:${id}`, client.id, {
+        await this.sessionClient.set(`users:${id}`, client.id, {
           XX: true,
           EX: 30,
         });
@@ -100,6 +105,7 @@ export class MessagesGateway
     return filteredList;
   }
 
+  @UseGuards(MessagingGuard)
   @SubscribeMessage(CLIENT_MESSAGES.CREATE_ROOM)
   handleCreateRoom(
     @MessageBody() roomName: string,
@@ -184,6 +190,7 @@ export class MessagesGateway
     return { success: true };
   }
 
+  @UseGuards(MessagingGuard)
   @SubscribeMessage(CLIENT_MESSAGES.SEND_MESSAGE)
   handleSendMessage(
     @MessageBody() message: string,
@@ -213,6 +220,35 @@ export class MessagesGateway
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, newMessage);
   }
 
+  // TODO: add guard
+  @SubscribeMessage(CLIENT_MESSAGES.KICK)
+  handleSendCommand(
+    @MessageBody() username: string,
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    //
+  }
+
+  // TODO: add guard
+  @SubscribeMessage(CLIENT_MESSAGES.MUTE)
+  handleMute(
+    @MessageBody() username: string,
+    @MessageBody() time: number,
+    @ConnectedSocket() client: AuthenticatedSocket
+  ) {
+    //
+  }
+
+  // TODO: add guard
+  @SubscribeMessage(CLIENT_MESSAGES.BAN)
+  handleBan(
+    @MessageBody() username: string,
+    @MessageBody() time: number,
+    @ConnectedSocket() client
+  ) {
+    //
+  }
+
   private async initUserInitialization(
     client: Socket,
     next: (err?: Error) => void
@@ -233,13 +269,23 @@ export class MessagesGateway
       const { id } = payload;
 
       // checking if account already logged in
-      const canConnect = await this.redisClient.set(`users:${id}`, client.id, {
-        EX: 30,
-        NX: true,
-      });
+      const canConnect = await this.sessionClient.set(
+        `users:${id}`,
+        client.id,
+        {
+          EX: 30,
+          NX: true,
+        }
+      );
 
       if (!canConnect) {
         return next(new Error('Already logged in'));
+      }
+
+      // check if user is banned
+      const userStatus = await this.userStatusClient.get(id);
+      if (userStatus === 'BAN') {
+        return next(new Error('You are banned, wait for ban to expire'));
       }
 
       client.data.user = payload;
@@ -276,7 +322,7 @@ export class MessagesGateway
 
     // remove logged in lock from redis
     if (client.data.user) {
-      await this.redisClient.del(`users:${id}`);
+      await this.sessionClient.del(`users:${id}`);
     }
   }
 
