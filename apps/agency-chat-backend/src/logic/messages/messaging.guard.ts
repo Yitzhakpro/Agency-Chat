@@ -18,18 +18,19 @@ export class MessagingGuard implements CanActivate, OnModuleInit {
   }
 
   async onModuleInit() {
-    await this.userStatusClient.connect();
+    if (!this.userStatusClient.isOpen) {
+      await this.userStatusClient.connect();
+    }
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: AuthenticatedSocket = context.switchToWs().getClient();
-    const { id } = request.data.user;
+    const { username } = request.data.user;
 
-    const userStatus = await this.userStatusClient.get(id);
+    const userStatus = await this.userStatusClient.get(username);
     if (userStatus === 'MUTE' || userStatus === 'BAN') {
       // TODO: better handle
       throw new Error(`cant type because: ${userStatus}`);
-      return false;
     }
 
     return true;

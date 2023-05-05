@@ -7,7 +7,11 @@ export interface StatusReturn {
   message?: string;
 }
 
-export type MessageType = 'message' | 'user_joined' | 'user_left';
+export type MessageType =
+  | 'message'
+  | 'user_joined'
+  | 'user_left'
+  | 'system_message';
 
 export interface Message {
   type: MessageType;

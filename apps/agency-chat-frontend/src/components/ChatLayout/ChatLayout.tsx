@@ -12,6 +12,7 @@ function ChatLayout(): JSX.Element {
     }
 
     MessageClient.on('connect_error', (err) => {
+      // TODO: better handle
       console.log(err.message);
     });
 

@@ -226,27 +226,95 @@ export class MessagesGateway
     @MessageBody() username: string,
     @ConnectedSocket() client: AuthenticatedSocket
   ) {
-    //
+    const { username: roleUsername } = client.data.user;
+    const currentRoom = [...client.rooms][1];
+
+    const kickedUserClient = this.getClientByUsername(username);
+    if (!kickedUserClient) {
+      // TODO: better handle
+      return;
+    }
+    const { role } = kickedUserClient.data.user;
+
+    const kickedMessage: Message = {
+      type: 'user_left',
+      id: nanoid(),
+      username,
+      role,
+      text: `${roleUsername} kicked ${username}`,
+      timestamp: new Date(),
+    };
+
+    kickedUserClient.disconnect();
+
+    this.server
+      .to(currentRoom)
+      .emit(SERVER_MESSAGES.MESSAGE_SENT, kickedMessage);
   }
 
   // TODO: add guard
   @SubscribeMessage(CLIENT_MESSAGES.MUTE)
   handleMute(
-    @MessageBody() username: string,
-    @MessageBody() time: number,
+    @MessageBody() muteBody: [string, number],
     @ConnectedSocket() client: AuthenticatedSocket
   ) {
-    //
+    const [username, time] = muteBody;
+    const { username: roleUsername } = client.data.user;
+    const currentRoom = [...client.rooms][1];
+
+    const mutedUserClient = this.getClientByUsername(username);
+    if (!mutedUserClient) {
+      // TODO: better handle
+      return;
+    }
+    const { role } = mutedUserClient.data.user;
+
+    this.userStatusClient.set(username, 'MUTE', { EX: time });
+
+    const muteMessage: Message = {
+      type: 'system_message',
+      id: nanoid(),
+      username,
+      role,
+      text: `${roleUsername} muted ${username} for: ${time} seconds`,
+      timestamp: new Date(),
+    };
+
+    this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, muteMessage);
   }
 
   // TODO: add guard
   @SubscribeMessage(CLIENT_MESSAGES.BAN)
   handleBan(
-    @MessageBody() username: string,
-    @MessageBody() time: number,
-    @ConnectedSocket() client
+    @MessageBody() banBody: [string, number],
+    @ConnectedSocket() client: AuthenticatedSocket
   ) {
-    //
+    const [username, time] = banBody;
+    const { username: roleUsername } = client.data.user;
+    const currentRoom = [...client.rooms][1];
+
+    const bannedUserClient = this.getClientByUsername(username);
+
+    if (!bannedUserClient) {
+      // TODO: better handle
+      return;
+    }
+    const { role } = bannedUserClient.data.user;
+
+    this.userStatusClient.set(username, 'BAN', { EX: time });
+
+    const banMessage: Message = {
+      type: 'user_left',
+      id: nanoid(),
+      username,
+      role,
+      text: `${roleUsername} banned ${username}`,
+      timestamp: new Date(),
+    };
+
+    bannedUserClient.disconnect();
+
+    this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, banMessage);
   }
 
   private async initUserInitialization(
@@ -266,7 +334,7 @@ export class MessagesGateway
         secret: this.tokenSecret,
       });
 
-      const { id } = payload;
+      const { id, username } = payload;
 
       // checking if account already logged in
       const canConnect = await this.sessionClient.set(
@@ -283,7 +351,7 @@ export class MessagesGateway
       }
 
       // check if user is banned
-      const userStatus = await this.userStatusClient.get(id);
+      const userStatus = await this.userStatusClient.get(username);
       if (userStatus === 'BAN') {
         return next(new Error('You are banned, wait for ban to expire'));
       }
@@ -342,5 +410,19 @@ export class MessagesGateway
     const clientRooms = [...client.rooms];
 
     return clientRooms.length === 2;
+  }
+
+  private getClientByUsername(username: string): AuthenticatedSocket {
+    const sockets = this.server.sockets.sockets;
+
+    for (const sockObj of sockets) {
+      const socket = sockObj[1] as AuthenticatedSocket;
+
+      if (socket.data.user.username === username) {
+        return socket;
+      }
+    }
+
+    return null;
   }
 }
