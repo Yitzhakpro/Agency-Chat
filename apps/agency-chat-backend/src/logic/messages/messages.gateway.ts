@@ -336,6 +336,12 @@ export class MessagesGateway
 
       const { id, username } = payload;
 
+      // check if user is banned
+      const userStatus = await this.userStatusClient.get(username);
+      if (userStatus === 'BAN') {
+        return next(new Error('You are banned, wait for ban to expire'));
+      }
+
       // checking if account already logged in
       const canConnect = await this.sessionClient.set(
         `users:${id}`,
@@ -348,12 +354,6 @@ export class MessagesGateway
 
       if (!canConnect) {
         return next(new Error('Already logged in'));
-      }
-
-      // check if user is banned
-      const userStatus = await this.userStatusClient.get(username);
-      if (userStatus === 'BAN') {
-        return next(new Error('You are banned, wait for ban to expire'));
       }
 
       client.data.user = payload;
