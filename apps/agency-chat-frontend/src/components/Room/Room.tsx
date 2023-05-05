@@ -5,7 +5,11 @@ import {
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import type { StatusReturn, Message } from '@agency-chat/shared/interfaces';
+import type {
+  StatusReturn,
+  Message,
+  Command,
+} from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
@@ -56,11 +60,33 @@ function Room(): JSX.Element {
     };
   }, []);
 
+  const handleSendCommand = (commandText: string) => {
+    const commandsToEvents = {
+      kick: CLIENT_MESSAGES.KICK,
+      mute: CLIENT_MESSAGES.MUTE,
+      ban: CLIENT_MESSAGES.BAN,
+    };
+
+    const splitCommand = commandText.split(' ');
+    const [commandName, ...commandArgs] = splitCommand;
+
+    if (commandName in commandsToEvents) {
+      const commandToSend = commandsToEvents[commandName as Command];
+
+      // TODO: handle fail command
+      MessageClient.emit(commandToSend, ...commandArgs);
+    }
+  };
+
   // TODO: indicate failure of sending
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
-    MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
+    if (message.startsWith('/')) {
+      handleSendCommand(message.slice(1));
+    } else {
+      MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
+    }
     setMessage('');
   };
 

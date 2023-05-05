@@ -22,4 +22,4 @@ export interface Message {
   timestamp: Date;
 }
 
-export type Command = 'KICK' | 'MUTE' | 'BAN';
+export type Command = 'kick' | 'mute' | 'ban';
