@@ -225,14 +225,13 @@ export class MessagesGateway
   handleSendCommand(
     @MessageBody() username: string,
     @ConnectedSocket() client: AuthenticatedSocket
-  ) {
+  ): StatusReturn {
     const { username: roleUsername } = client.data.user;
     const currentRoom = [...client.rooms][1];
 
     const kickedUserClient = this.getClientByUsername(username);
     if (!kickedUserClient) {
-      // TODO: better handle
-      return;
+      return { success: false, message: `${username} is not in this room` };
     }
     const { role } = kickedUserClient.data.user;
 
@@ -250,6 +249,8 @@ export class MessagesGateway
     this.server
       .to(currentRoom)
       .emit(SERVER_MESSAGES.MESSAGE_SENT, kickedMessage);
+
+    return { success: true };
   }
 
   @UseGuards(RoleMessagingGuard)
@@ -257,15 +258,14 @@ export class MessagesGateway
   handleMute(
     @MessageBody() muteBody: [string, number],
     @ConnectedSocket() client: AuthenticatedSocket
-  ) {
+  ): StatusReturn {
     const [username, time] = muteBody;
     const { username: roleUsername } = client.data.user;
     const currentRoom = [...client.rooms][1];
 
     const mutedUserClient = this.getClientByUsername(username);
     if (!mutedUserClient) {
-      // TODO: better handle
-      return;
+      return { success: false, message: `${username} is not in this room` };
     }
     const { role } = mutedUserClient.data.user;
 
@@ -281,6 +281,8 @@ export class MessagesGateway
     };
 
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, muteMessage);
+
+    return { success: true };
   }
 
   @UseGuards(RoleMessagingGuard)
@@ -288,7 +290,7 @@ export class MessagesGateway
   handleBan(
     @MessageBody() banBody: [string, number],
     @ConnectedSocket() client: AuthenticatedSocket
-  ) {
+  ): StatusReturn {
     const [username, time] = banBody;
     const { username: roleUsername } = client.data.user;
     const currentRoom = [...client.rooms][1];
@@ -296,8 +298,7 @@ export class MessagesGateway
     const bannedUserClient = this.getClientByUsername(username);
 
     if (!bannedUserClient) {
-      // TODO: better handle
-      return;
+      return { success: false, message: `${username} is not in the room` };
     }
     const { role } = bannedUserClient.data.user;
 
@@ -315,6 +316,8 @@ export class MessagesGateway
     bannedUserClient.disconnect();
 
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, banMessage);
+
+    return { success: true };
   }
 
   private async initUserInitialization(

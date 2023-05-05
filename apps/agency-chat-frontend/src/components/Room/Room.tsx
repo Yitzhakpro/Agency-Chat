@@ -73,8 +73,16 @@ function Room(): JSX.Element {
     if (commandName in commandsToEvents) {
       const commandToSend = commandsToEvents[commandName as Command];
 
-      // TODO: handle fail command
-      MessageClient.emit(commandToSend, ...commandArgs);
+      MessageClient.emit(
+        commandToSend,
+        ...commandArgs,
+        (status: StatusReturn) => {
+          const { success, message } = status;
+          if (!success) {
+            alert(message);
+          }
+        }
+      );
     }
   };
 
