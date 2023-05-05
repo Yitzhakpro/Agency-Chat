@@ -16,6 +16,7 @@ import {
 } from '@agency-chat/shared/constants';
 import { sessionClient, userStatusClient } from '../../database/redis';
 import { MessagingGuard } from './messaging.guard';
+import { RoleMessagingGuard } from './roleMessaging.guard';
 import type {
   OnGatewayInit,
   OnGatewayConnection,
@@ -24,7 +25,6 @@ import type {
 import type { Server, Socket } from 'socket.io';
 import type { RedisClientType } from 'redis';
 import type {
-  Command,
   GetRoomsReturn,
   Message,
   StatusReturn,
@@ -220,7 +220,7 @@ export class MessagesGateway
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, newMessage);
   }
 
-  // TODO: add guard
+  @UseGuards(RoleMessagingGuard)
   @SubscribeMessage(CLIENT_MESSAGES.KICK)
   handleSendCommand(
     @MessageBody() username: string,
@@ -252,7 +252,7 @@ export class MessagesGateway
       .emit(SERVER_MESSAGES.MESSAGE_SENT, kickedMessage);
   }
 
-  // TODO: add guard
+  @UseGuards(RoleMessagingGuard)
   @SubscribeMessage(CLIENT_MESSAGES.MUTE)
   handleMute(
     @MessageBody() muteBody: [string, number],
@@ -283,7 +283,7 @@ export class MessagesGateway
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, muteMessage);
   }
 
-  // TODO: add guard
+  @UseGuards(RoleMessagingGuard)
   @SubscribeMessage(CLIENT_MESSAGES.BAN)
   handleBan(
     @MessageBody() banBody: [string, number],
