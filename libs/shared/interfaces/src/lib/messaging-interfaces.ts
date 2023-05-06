@@ -1,3 +1,4 @@
+import { EXCEPTIONS } from '@agency-chat/shared/constants';
 import type { Role } from './user-interfaces';
 
 export type GetRoomsReturn = string[];
@@ -7,7 +8,11 @@ export interface StatusReturn {
   message?: string;
 }
 
-export type MessageType = 'message' | 'user_joined' | 'user_left';
+export type MessageType =
+  | 'message'
+  | 'user_joined'
+  | 'user_left'
+  | 'system_message';
 
 export interface Message {
   type: MessageType;
@@ -16,4 +21,12 @@ export interface Message {
   role: Role;
   text: string;
   timestamp: Date;
+}
+
+export type Command = 'kick' | 'mute' | 'ban';
+
+export interface WsErrorObject {
+  status: string;
+  type: keyof typeof EXCEPTIONS;
+  message: string;
 }

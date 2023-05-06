@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -14,7 +14,9 @@ import {
   CLIENT_MESSAGES,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
-import { redisClient } from '../../database/redis';
+import { sessionClient, userStatusClient } from '../../database/redis';
+import { MessagingGuard } from './messaging.guard';
+import { RoleMessagingGuard } from './roleMessaging.guard';
 import type {
   OnGatewayInit,
   OnGatewayConnection,
@@ -38,7 +40,8 @@ export class MessagesGateway
   public server: Server;
   private cookieName: string;
   private tokenSecret: string;
-  private redisClient: RedisClientType;
+  private sessionClient: RedisClientType;
+  private userStatusClient: RedisClientType;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -46,11 +49,13 @@ export class MessagesGateway
   ) {
     this.cookieName = configService.get<string>('auth.cookie.name');
     this.tokenSecret = configService.get<string>('auth.token.secret');
-    this.redisClient = redisClient as RedisClientType;
+    this.sessionClient = sessionClient as RedisClientType;
+    this.userStatusClient = userStatusClient as RedisClientType;
   }
 
   async afterInit(server: Server) {
-    await this.redisClient.connect();
+    await this.sessionClient.connect();
+    await this.userStatusClient.connect();
     server.use(this.initUserInitialization.bind(this));
   }
 
@@ -65,7 +70,7 @@ export class MessagesGateway
     // Renew redis user session lock
     client.conn.on('packet', async (packet) => {
       if (client.data.user && packet.type === 'pong') {
-        await this.redisClient.set(`users:${id}`, client.id, {
+        await this.sessionClient.set(`users:${id}`, client.id, {
           XX: true,
           EX: 30,
         });
@@ -100,6 +105,7 @@ export class MessagesGateway
     return filteredList;
   }
 
+  @UseGuards(MessagingGuard)
   @SubscribeMessage(CLIENT_MESSAGES.CREATE_ROOM)
   handleCreateRoom(
     @MessageBody() roomName: string,
@@ -184,6 +190,7 @@ export class MessagesGateway
     return { success: true };
   }
 
+  @UseGuards(MessagingGuard)
   @SubscribeMessage(CLIENT_MESSAGES.SEND_MESSAGE)
   handleSendMessage(
     @MessageBody() message: string,
@@ -213,6 +220,121 @@ export class MessagesGateway
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, newMessage);
   }
 
+  @UseGuards(RoleMessagingGuard)
+  @SubscribeMessage(CLIENT_MESSAGES.KICK)
+  handleSendCommand(
+    @MessageBody() username: string,
+    @ConnectedSocket() client: AuthenticatedSocket
+  ): StatusReturn {
+    const { id, username: roleUsername } = client.data.user;
+    const currentRoom = [...client.rooms][1];
+
+    const kickedUserClient = this.getClientByUsername(username);
+    if (!kickedUserClient) {
+      return { success: false, message: `${username} is not in this room` };
+    }
+    const { role } = kickedUserClient.data.user;
+
+    // TODO: create better log system
+    console.log(
+      `${id}-${username} [${role}] kicked ${username} from room: ${currentRoom}`
+    );
+
+    const kickedMessage: Message = {
+      type: 'user_left',
+      id: nanoid(),
+      username,
+      role,
+      text: `${roleUsername} kicked ${username}`,
+      timestamp: new Date(),
+    };
+
+    kickedUserClient.disconnect();
+
+    this.server
+      .to(currentRoom)
+      .emit(SERVER_MESSAGES.MESSAGE_SENT, kickedMessage);
+
+    return { success: true };
+  }
+
+  @UseGuards(RoleMessagingGuard)
+  @SubscribeMessage(CLIENT_MESSAGES.MUTE)
+  handleMute(
+    @MessageBody() muteBody: [string, number],
+    @ConnectedSocket() client: AuthenticatedSocket
+  ): StatusReturn {
+    const [username, time] = muteBody;
+    const { id, username: roleUsername } = client.data.user;
+    const currentRoom = [...client.rooms][1];
+
+    const mutedUserClient = this.getClientByUsername(username);
+    if (!mutedUserClient) {
+      return { success: false, message: `${username} is not in this room` };
+    }
+    const { role } = mutedUserClient.data.user;
+
+    this.userStatusClient.set(username, 'MUTE', { EX: time });
+
+    // TODO: create better log system
+    console.log(
+      `${id}-${username} [${role}] muted ${username} for ${time} in room: ${currentRoom}`
+    );
+
+    const muteMessage: Message = {
+      type: 'system_message',
+      id: nanoid(),
+      username,
+      role,
+      text: `${roleUsername} muted ${username} for: ${time} seconds`,
+      timestamp: new Date(),
+    };
+
+    this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, muteMessage);
+
+    return { success: true };
+  }
+
+  @UseGuards(RoleMessagingGuard)
+  @SubscribeMessage(CLIENT_MESSAGES.BAN)
+  handleBan(
+    @MessageBody() banBody: [string, number],
+    @ConnectedSocket() client: AuthenticatedSocket
+  ): StatusReturn {
+    const [username, time] = banBody;
+    const { id, username: roleUsername } = client.data.user;
+    const currentRoom = [...client.rooms][1];
+
+    const bannedUserClient = this.getClientByUsername(username);
+
+    if (!bannedUserClient) {
+      return { success: false, message: `${username} is not in the room` };
+    }
+    const { role } = bannedUserClient.data.user;
+
+    this.userStatusClient.set(username, 'BAN', { EX: time });
+
+    // TODO: create better log system
+    console.log(
+      `${id}-${username} [${role}] banned ${username} for ${time} in room: ${currentRoom}`
+    );
+
+    const banMessage: Message = {
+      type: 'user_left',
+      id: nanoid(),
+      username,
+      role,
+      text: `${roleUsername} banned ${username}`,
+      timestamp: new Date(),
+    };
+
+    bannedUserClient.disconnect();
+
+    this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, banMessage);
+
+    return { success: true };
+  }
+
   private async initUserInitialization(
     client: Socket,
     next: (err?: Error) => void
@@ -230,13 +352,23 @@ export class MessagesGateway
         secret: this.tokenSecret,
       });
 
-      const { id } = payload;
+      const { id, username } = payload;
+
+      // check if user is banned
+      const userStatus = await this.userStatusClient.get(username);
+      if (userStatus === 'BAN') {
+        return next(new Error('You are banned, wait for ban to expire'));
+      }
 
       // checking if account already logged in
-      const canConnect = await this.redisClient.set(`users:${id}`, client.id, {
-        EX: 30,
-        NX: true,
-      });
+      const canConnect = await this.sessionClient.set(
+        `users:${id}`,
+        client.id,
+        {
+          EX: 30,
+          NX: true,
+        }
+      );
 
       if (!canConnect) {
         return next(new Error('Already logged in'));
@@ -276,7 +408,7 @@ export class MessagesGateway
 
     // remove logged in lock from redis
     if (client.data.user) {
-      await this.redisClient.del(`users:${id}`);
+      await this.sessionClient.del(`users:${id}`);
     }
   }
 
@@ -296,5 +428,19 @@ export class MessagesGateway
     const clientRooms = [...client.rooms];
 
     return clientRooms.length === 2;
+  }
+
+  private getClientByUsername(username: string): AuthenticatedSocket {
+    const sockets = this.server.sockets.sockets;
+
+    for (const sockObj of sockets) {
+      const socket = sockObj[1] as AuthenticatedSocket;
+
+      if (socket.data.user.username === username) {
+        return socket;
+      }
+    }
+
+    return null;
   }
 }

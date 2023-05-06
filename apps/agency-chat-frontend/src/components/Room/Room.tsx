@@ -2,10 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   CLIENT_MESSAGES,
+  EXCEPTIONS,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import type { StatusReturn, Message } from '@agency-chat/shared/interfaces';
+import type {
+  StatusReturn,
+  Message,
+  Command,
+  WsErrorObject,
+} from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
@@ -46,6 +52,26 @@ function Room(): JSX.Element {
     };
   }, []);
 
+  // handle command / message errors
+  useEffect(() => {
+    function handleException(errorObj: WsErrorObject) {
+      const { type, message } = errorObj;
+
+      if (
+        type === EXCEPTIONS.COMMAND_ERROR ||
+        type === EXCEPTIONS.MESSAGE_ERROR
+      ) {
+        alert(message);
+      }
+    }
+
+    MessageClient.on('exception', handleException);
+
+    return () => {
+      MessageClient.off('exception', handleException);
+    };
+  });
+
   useEffect(() => {
     return () => {
       if (readyToLeave.current) {
@@ -56,11 +82,41 @@ function Room(): JSX.Element {
     };
   }, []);
 
+  const handleSendCommand = (commandText: string) => {
+    const commandsToEvents = {
+      kick: CLIENT_MESSAGES.KICK,
+      mute: CLIENT_MESSAGES.MUTE,
+      ban: CLIENT_MESSAGES.BAN,
+    };
+
+    const splitCommand = commandText.split(' ');
+    const [commandName, ...commandArgs] = splitCommand;
+
+    if (commandName in commandsToEvents) {
+      const commandToSend = commandsToEvents[commandName as Command];
+
+      MessageClient.emit(
+        commandToSend,
+        ...commandArgs,
+        (status: StatusReturn) => {
+          const { success, message } = status;
+          if (!success) {
+            alert(message);
+          }
+        }
+      );
+    }
+  };
+
   // TODO: indicate failure of sending
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
-    MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
+    if (message.startsWith('/')) {
+      handleSendCommand(message.slice(1));
+    } else {
+      MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
+    }
     setMessage('');
   };
 
