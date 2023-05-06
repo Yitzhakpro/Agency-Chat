@@ -6,7 +6,6 @@ import {
   NotFound,
   Layout,
   ProtectedLayout,
-  ChatLayout,
   RoomsPage,
   Room,
 } from '../components';
@@ -23,10 +22,8 @@ export function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route element={<ProtectedLayout />}>
-            <Route element={<ChatLayout />}>
-              <Route path="/rooms" element={<RoomsPage />} />
-              <Route path="/room/:roomId" element={<Room />} />
-            </Route>
+            <Route path="/rooms" element={<RoomsPage />} />
+            <Route path="/room/:roomId" element={<Room />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>
