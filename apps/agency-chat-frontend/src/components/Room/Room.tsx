@@ -52,12 +52,15 @@ function Room(): JSX.Element {
     };
   }, []);
 
-  // handle command errors
+  // handle command / message errors
   useEffect(() => {
     function handleException(errorObj: WsErrorObject) {
       const { type, message } = errorObj;
 
-      if (type === EXCEPTIONS.COMMAND_ERROR) {
+      if (
+        type === EXCEPTIONS.COMMAND_ERROR ||
+        type === EXCEPTIONS.MESSAGE_ERROR
+      ) {
         alert(message);
       }
     }
