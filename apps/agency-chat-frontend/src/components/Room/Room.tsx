@@ -6,6 +6,7 @@ import {
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
+import { useAuth } from '../../hooks';
 import type {
   StatusReturn,
   Message,
@@ -16,6 +17,7 @@ import type {
 function Room(): JSX.Element {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const { role } = useAuth();
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -92,7 +94,8 @@ function Room(): JSX.Element {
     const splitCommand = commandText.split(' ');
     const [commandName, ...commandArgs] = splitCommand;
 
-    if (commandName in commandsToEvents) {
+    // TODO: show info on screen
+    if (commandName in commandsToEvents && role === 'ADMIN') {
       const commandToSend = commandsToEvents[commandName as Command];
 
       MessageClient.emit(
