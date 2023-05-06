@@ -5,6 +5,8 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { WsException } from '@nestjs/websockets';
+import { EXCEPTIONS } from '@agency-chat/shared/constants';
 import { userStatusClient } from '../../database/redis';
 import type { RedisClientType } from 'redis';
 import type { AuthenticatedSocket } from '../../types';
@@ -29,8 +31,11 @@ export class MessagingGuard implements CanActivate, OnModuleInit {
 
     const userStatus = await this.userStatusClient.get(username);
     if (userStatus === 'MUTE' || userStatus === 'BAN') {
-      // TODO: better handle
-      throw new Error(`cant type because: ${userStatus}`);
+      throw new WsException({
+        status: 'error',
+        type: EXCEPTIONS.MESSAGE_ERROR,
+        message: `Can't type because you are in: ${userStatus}`,
+      });
     }
 
     return true;

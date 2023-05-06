@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   CLIENT_MESSAGES,
+  EXCEPTIONS,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
@@ -9,6 +10,7 @@ import type {
   StatusReturn,
   Message,
   Command,
+  WsErrorObject,
 } from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
@@ -49,6 +51,23 @@ function Room(): JSX.Element {
       MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
     };
   }, []);
+
+  // handle command errors
+  useEffect(() => {
+    function handleException(errorObj: WsErrorObject) {
+      const { type, message } = errorObj;
+
+      if (type === EXCEPTIONS.COMMAND_ERROR) {
+        alert(message);
+      }
+    }
+
+    MessageClient.on('exception', handleException);
+
+    return () => {
+      MessageClient.off('exception', handleException);
+    };
+  });
 
   useEffect(() => {
     return () => {

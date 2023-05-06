@@ -1,3 +1,4 @@
+import { EXCEPTIONS } from '@agency-chat/shared/constants';
 import type { Role } from './user-interfaces';
 
 export type GetRoomsReturn = string[];
@@ -23,3 +24,9 @@ export interface Message {
 }
 
 export type Command = 'kick' | 'mute' | 'ban';
+
+export interface WsErrorObject {
+  status: string;
+  type: keyof typeof EXCEPTIONS;
+  message: string;
+}
