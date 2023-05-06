@@ -226,7 +226,7 @@ export class MessagesGateway
     @MessageBody() username: string,
     @ConnectedSocket() client: AuthenticatedSocket
   ): StatusReturn {
-    const { username: roleUsername } = client.data.user;
+    const { id, username: roleUsername } = client.data.user;
     const currentRoom = [...client.rooms][1];
 
     const kickedUserClient = this.getClientByUsername(username);
@@ -234,6 +234,11 @@ export class MessagesGateway
       return { success: false, message: `${username} is not in this room` };
     }
     const { role } = kickedUserClient.data.user;
+
+    // TODO: create better log system
+    console.log(
+      `${id}-${username} [${role}] kicked ${username} from room: ${currentRoom}`
+    );
 
     const kickedMessage: Message = {
       type: 'user_left',
@@ -260,7 +265,7 @@ export class MessagesGateway
     @ConnectedSocket() client: AuthenticatedSocket
   ): StatusReturn {
     const [username, time] = muteBody;
-    const { username: roleUsername } = client.data.user;
+    const { id, username: roleUsername } = client.data.user;
     const currentRoom = [...client.rooms][1];
 
     const mutedUserClient = this.getClientByUsername(username);
@@ -270,6 +275,11 @@ export class MessagesGateway
     const { role } = mutedUserClient.data.user;
 
     this.userStatusClient.set(username, 'MUTE', { EX: time });
+
+    // TODO: create better log system
+    console.log(
+      `${id}-${username} [${role}] muted ${username} for ${time} in room: ${currentRoom}`
+    );
 
     const muteMessage: Message = {
       type: 'system_message',
@@ -292,7 +302,7 @@ export class MessagesGateway
     @ConnectedSocket() client: AuthenticatedSocket
   ): StatusReturn {
     const [username, time] = banBody;
-    const { username: roleUsername } = client.data.user;
+    const { id, username: roleUsername } = client.data.user;
     const currentRoom = [...client.rooms][1];
 
     const bannedUserClient = this.getClientByUsername(username);
@@ -303,6 +313,11 @@ export class MessagesGateway
     const { role } = bannedUserClient.data.user;
 
     this.userStatusClient.set(username, 'BAN', { EX: time });
+
+    // TODO: create better log system
+    console.log(
+      `${id}-${username} [${role}] banned ${username} for ${time} in room: ${currentRoom}`
+    );
 
     const banMessage: Message = {
       type: 'user_left',
