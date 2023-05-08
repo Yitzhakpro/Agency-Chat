@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
+import { AppShell } from '@mantine/core';
 import { useAuth } from '../../hooks';
 import { MessageClient } from '../../services';
-import { Outlet } from 'react-router-dom';
+import Header from '../Header';
 
 function Layout(): JSX.Element {
   const { isLoggedIn } = useAuth();
@@ -23,7 +25,11 @@ function Layout(): JSX.Element {
     };
   }, [isLoggedIn]);
 
-  return <Outlet />;
+  return (
+    <AppShell header={<Header />}>
+      <Outlet />
+    </AppShell>
+  );
 }
 
 export default Layout;

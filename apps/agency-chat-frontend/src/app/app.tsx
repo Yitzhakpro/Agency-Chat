@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { MantineProvider } from '@mantine/core';
 import {
   Login,
   Register,
@@ -15,20 +16,22 @@ import styles from './app.module.css';
 
 export function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route element={<ProtectedLayout />}>
-            <Route path="/rooms" element={<RoomsPage />} />
-            <Route path="/room/:roomId" element={<Room />} />
+    <MantineProvider withGlobalStyles withNormalizeCSS>
+      <AuthProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route element={<ProtectedLayout />}>
+              <Route path="/rooms" element={<RoomsPage />} />
+              <Route path="/room/:roomId" element={<Room />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </AuthProvider>
+        </Routes>
+      </AuthProvider>
+    </MantineProvider>
   );
 }
 
