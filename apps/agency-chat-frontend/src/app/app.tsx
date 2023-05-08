@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { MantineProvider } from '@mantine/core';
+import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import {
   Login,
   Register,
@@ -11,27 +12,41 @@ import {
   Room,
 } from '../components';
 import { AuthProvider } from '../providers';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.css';
+import type { ColorScheme } from '@mantine/core';
 
 export function App() {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+
+  const toggleColorScheme = (value?: ColorScheme) => {
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+  };
+
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
-      <AuthProvider>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Homepage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route element={<ProtectedLayout />}>
-              <Route path="/rooms" element={<RoomsPage />} />
-              <Route path="/room/:roomId" element={<Room />} />
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider
+        theme={{ colorScheme }}
+        withGlobalStyles
+        withNormalizeCSS
+      >
+        <AuthProvider>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Homepage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route element={<ProtectedLayout />}>
+                <Route path="/rooms" element={<RoomsPage />} />
+                <Route path="/room/:roomId" element={<Room />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
             </Route>
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
-    </MantineProvider>
+          </Routes>
+        </AuthProvider>
+      </MantineProvider>
+    </ColorSchemeProvider>
   );
 }
 
