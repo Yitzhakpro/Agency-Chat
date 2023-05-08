@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Input,
+  PasswordInput,
+  Text,
+} from '@mantine/core';
+import { IconAt, IconLock } from '@tabler/icons-react';
 import { useAuth } from '../../hooks';
 
 function Login(): JSX.Element {
@@ -41,15 +51,48 @@ function Login(): JSX.Element {
   }
 
   return (
-    <form onSubmit={handleSubmitLogin}>
-      <span>Email: </span>
-      <input type="email" value={email} onChange={handleEmailChange} />
+    <Center style={{ height: '100%' }}>
+      <Box>
+        <Container>
+          <Text>
+            Don't have an account? click{' '}
+            <Link
+              style={{ textDecoration: 'none', color: '#228be6' }}
+              to="/register"
+            >
+              here
+            </Link>{' '}
+            to register
+          </Text>
+        </Container>
+        <form onSubmit={handleSubmitLogin}>
+          <Input.Wrapper label="Your email" required>
+            <Input
+              icon={<IconAt />}
+              placeholder="Your email"
+              required
+              value={email}
+              onChange={handleEmailChange}
+            />
+          </Input.Wrapper>
 
-      <span>Password: </span>
-      <input type="password" value={password} onChange={handlePasswordChange} />
+          <PasswordInput
+            icon={<IconLock />}
+            placeholder="Your password"
+            label="Your password"
+            withAsterisk
+            value={password}
+            onChange={handlePasswordChange}
+          />
 
-      <button type="submit">Login</button>
-    </form>
+          <Center mt="lg">
+            <Button variant="light" type="submit">
+              Login
+            </Button>
+          </Center>
+        </form>
+      </Box>
+    </Center>
   );
 }
 
