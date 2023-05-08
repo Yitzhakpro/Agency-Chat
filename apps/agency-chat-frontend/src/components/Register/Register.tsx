@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { Box, Button, Center, Input, PasswordInput } from '@mantine/core';
+import { IconAt, IconLock } from '@tabler/icons-react';
 import { useAuth } from '../../hooks';
 
 function Register(): JSX.Element {
@@ -9,6 +11,7 @@ function Register(): JSX.Element {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleEmailChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -28,6 +31,12 @@ function Register(): JSX.Element {
     setPassword(event.target.value);
   };
 
+  const handleConfirmPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setConfirmPassword(event.target.value);
+  };
+
   const handleSubmitRegister = async (
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
@@ -44,18 +53,54 @@ function Register(): JSX.Element {
   }
 
   return (
-    <form onSubmit={handleSubmitRegister}>
-      <span>Email: </span>
-      <input type="email" value={email} onChange={handleEmailChange} />
+    <Center style={{ height: '100%' }}>
+      <Box>
+        <form onSubmit={handleSubmitRegister}>
+          <Input.Wrapper label="Your email" required>
+            <Input
+              icon={<IconAt />}
+              placeholder="Your email"
+              required
+              value={email}
+              onChange={handleEmailChange}
+            />
+          </Input.Wrapper>
 
-      <span>Username: </span>
-      <input type="text" value={username} onChange={handleUsernameChange} />
+          <Input.Wrapper label="Your username" required>
+            <Input
+              placeholder="Your username"
+              required
+              value={username}
+              onChange={handleUsernameChange}
+            />
+          </Input.Wrapper>
 
-      <span>Password: </span>
-      <input type="password" value={password} onChange={handlePasswordChange} />
+          <PasswordInput
+            icon={<IconLock />}
+            placeholder="Your password"
+            label="Your password"
+            withAsterisk
+            value={password}
+            onChange={handlePasswordChange}
+          />
 
-      <button type="submit">Register</button>
-    </form>
+          <PasswordInput
+            icon={<IconLock />}
+            placeholder="Confirm password"
+            label="Confirm password"
+            withAsterisk
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+          />
+
+          <Center mt="lg">
+            <Button variant="light" type="submit">
+              Register
+            </Button>
+          </Center>
+        </form>
+      </Box>
+    </Center>
   );
 }
 
