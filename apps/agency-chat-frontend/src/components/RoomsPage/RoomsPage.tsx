@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Affix, Button, Transition, rem } from '@mantine/core';
+import { useDisclosure, useWindowScroll } from '@mantine/hooks';
+import { IconArrowUp } from '@tabler/icons-react';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import CreateRoomModal from '../CreateRoomModal';
@@ -12,8 +13,13 @@ function RoomsPage(): JSX.Element {
     createRoomOpened,
     { open: openCreateRoomModal, close: closeCreateRoomModal },
   ] = useDisclosure(false);
+  const [scroll, scrollTo] = useWindowScroll();
 
   const [rooms, setRooms] = useState<string[]>([]);
+
+  const scrollToTop = (): void => {
+    scrollTo({ y: 0 });
+  };
 
   useEffect(() => {
     MessageClient.emit(
@@ -29,6 +35,21 @@ function RoomsPage(): JSX.Element {
       <Button onClick={() => openCreateRoomModal()}>create</Button>
       <RoomsList rooms={rooms} />
       <CreateRoomModal isOpen={createRoomOpened} close={closeCreateRoomModal} />
+
+      <Affix position={{ bottom: rem(20), right: rem(20) }}>
+        <Transition transition="slide-up" mounted={scroll.y > 0}>
+          {(transitionStyles) => (
+            <Button
+              leftIcon={<IconArrowUp size="1rem" />}
+              variant="light"
+              style={transitionStyles}
+              onClick={scrollToTop}
+            >
+              Scroll to top
+            </Button>
+          )}
+        </Transition>
+      </Affix>
     </>
   );
 }
