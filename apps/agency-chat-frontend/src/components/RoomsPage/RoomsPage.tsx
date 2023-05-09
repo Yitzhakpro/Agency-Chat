@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Button } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
+import CreateRoomModal from '../CreateRoomModal';
 import RoomsList from '../RoomsList';
-import type {
-  GetRoomsReturn,
-  StatusReturn,
-} from '@agency-chat/shared/interfaces';
+import type { GetRoomsReturn } from '@agency-chat/shared/interfaces';
 
 function RoomsPage(): JSX.Element {
-  const navigate = useNavigate();
+  const [
+    createRoomOpened,
+    { open: openCreateRoomModal, close: closeCreateRoomModal },
+  ] = useDisclosure(false);
 
-  const [createRoomName, setCreateRoomName] = useState('');
   const [rooms, setRooms] = useState<string[]>([]);
 
   useEffect(() => {
@@ -23,38 +24,12 @@ function RoomsPage(): JSX.Element {
     );
   }, []);
 
-  const handleCreateRoom = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    MessageClient.emit(
-      CLIENT_MESSAGES.CREATE_ROOM,
-      createRoomName,
-      (status: StatusReturn) => {
-        const { success, message } = status;
-
-        if (success) {
-          navigate(`/room/${createRoomName}`);
-        } else {
-          // TODO: better error visual
-          alert(`Can't create room: ${createRoomName}, reason: ${message}`);
-        }
-      }
-    );
-  };
-
   return (
-    <div>
-      <form onSubmit={handleCreateRoom}>
-        <input
-          type="text"
-          placeholder="create-room-name"
-          value={createRoomName}
-          onChange={(e) => setCreateRoomName(e.target.value)}
-        />
-        <button type="submit">create</button>
-      </form>
+    <>
+      <Button onClick={() => openCreateRoomModal()}>create</Button>
       <RoomsList rooms={rooms} />
-    </div>
+      <CreateRoomModal isOpen={createRoomOpened} close={closeCreateRoomModal} />
+    </>
   );
 }
 
