@@ -4,6 +4,7 @@ import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import { IconArrowUp } from '@tabler/icons-react';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
+import CreateRoomButton from '../CreateRoomButton';
 import CreateRoomModal from '../CreateRoomModal';
 import RoomsList from '../RoomsList';
 import type { GetRoomsReturn } from '@agency-chat/shared/interfaces';
@@ -17,10 +18,6 @@ function RoomsPage(): JSX.Element {
 
   const [rooms, setRooms] = useState<string[]>([]);
 
-  const scrollToTop = (): void => {
-    scrollTo({ y: 0 });
-  };
-
   useEffect(() => {
     MessageClient.emit(
       CLIENT_MESSAGES.GET_ROOMS,
@@ -30,9 +27,17 @@ function RoomsPage(): JSX.Element {
     );
   }, []);
 
+  const handleOpenCreateRoomModal = (): void => {
+    openCreateRoomModal();
+  };
+
+  const scrollToTop = (): void => {
+    scrollTo({ y: 0 });
+  };
+
   return (
     <>
-      <Button onClick={() => openCreateRoomModal()}>create</Button>
+      <CreateRoomButton onClick={handleOpenCreateRoomModal} />
       <RoomsList rooms={rooms} />
       <CreateRoomModal isOpen={createRoomOpened} close={closeCreateRoomModal} />
 
