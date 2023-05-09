@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   Center,
-  Container,
+  Group,
   Input,
   PasswordInput,
   Text,
@@ -53,18 +53,6 @@ function Login(): JSX.Element {
   return (
     <Center style={{ height: '100%' }}>
       <Box>
-        <Container>
-          <Text>
-            Don't have an account? click{' '}
-            <Link
-              style={{ textDecoration: 'none', color: '#228be6' }}
-              to="/register"
-            >
-              here
-            </Link>{' '}
-            to register
-          </Text>
-        </Container>
         <form onSubmit={handleSubmitLogin}>
           <Input.Wrapper label="Your email" required>
             <Input
@@ -85,11 +73,20 @@ function Login(): JSX.Element {
             onChange={handlePasswordChange}
           />
 
-          <Center mt="lg">
+          <Group mt="lg" style={{ justifyContent: 'space-between' }}>
+            <Text>
+              Don't have an account?{' '}
+              <Link
+                style={{ textDecoration: 'none', color: '#228be6' }}
+                to="/register"
+              >
+                Register
+              </Link>
+            </Text>
             <Button variant="light" type="submit">
               Login
             </Button>
-          </Center>
+          </Group>
         </form>
       </Box>
     </Center>

@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { Box, Button, Center, Input, PasswordInput } from '@mantine/core';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  Center,
+  Group,
+  Input,
+  PasswordInput,
+  Text,
+} from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
 import { useAuth } from '../../hooks';
 
@@ -93,11 +101,20 @@ function Register(): JSX.Element {
             onChange={handleConfirmPasswordChange}
           />
 
-          <Center mt="lg">
+          <Group mt="lg" style={{ justifyContent: 'space-between' }}>
+            <Text>
+              Have an account?{' '}
+              <Link
+                style={{ textDecoration: 'none', color: '#228be6' }}
+                to="/login"
+              >
+                Login
+              </Link>
+            </Text>
             <Button variant="light" type="submit">
               Register
             </Button>
-          </Center>
+          </Group>
         </form>
       </Box>
     </Center>
