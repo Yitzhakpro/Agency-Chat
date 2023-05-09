@@ -36,7 +36,7 @@ function RoomsPage(): JSX.Element {
       <RoomsList rooms={rooms} />
       <CreateRoomModal isOpen={createRoomOpened} close={closeCreateRoomModal} />
 
-      <Affix position={{ bottom: rem(20), right: rem(20) }}>
+      <Affix position={{ bottom: rem(10), right: rem(10) }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>
           {(transitionStyles) => (
             <Button

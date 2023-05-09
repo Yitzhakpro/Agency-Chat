@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Button, Divider, Paper, Text } from '@mantine/core';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import type { StatusReturn } from '@agency-chat/shared/interfaces';
@@ -30,10 +31,26 @@ function RoomItem(props: IRoomItemProps): JSX.Element {
   };
 
   return (
-    <div>
-      <h2>{roomName}</h2>
-      <button onClick={handleJoin}>Join</button>
-    </div>
+    <Paper
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
+      shadow="md"
+      radius="md"
+      p="sm"
+      mt="sm"
+      mb="sm"
+    >
+      <Text style={{ flex: 1 }} size="lg" weight={600}>
+        {roomName}
+      </Text>
+      <Divider orientation="vertical" />
+      <Button ml="sm" variant="light" onClick={handleJoin}>
+        Join
+      </Button>
+    </Paper>
   );
 }
 
