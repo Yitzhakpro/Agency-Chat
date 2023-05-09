@@ -15,10 +15,14 @@ import { AuthProvider } from '../providers';
 import type { ColorScheme } from '@mantine/core';
 
 export function App() {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(
+    (localStorage.getItem('theme') as ColorScheme) || 'light'
+  );
 
   const toggleColorScheme = (value?: ColorScheme) => {
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+    const newScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
+    localStorage.setItem('theme', newScheme);
+    setColorScheme(newScheme);
   };
 
   return (
