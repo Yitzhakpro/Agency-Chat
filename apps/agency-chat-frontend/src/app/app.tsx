@@ -52,10 +52,7 @@ export function App() {
             </Route>
           </Routes>
         </AuthProvider>
-        <ToastContainer
-          theme={colorScheme === 'dark' ? 'dark' : 'light'}
-          position="bottom-right"
-        />
+        <ToastContainer theme={colorScheme} position="bottom-right" />
       </MantineProvider>
     </ColorSchemeProvider>
   );
