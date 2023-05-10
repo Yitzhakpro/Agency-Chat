@@ -8,6 +8,7 @@ import {
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import MessageItem from '../MessageItem';
+import SystemMessageItem from '../SystemMessageItem';
 import SendMessageInput from '../SendMessageInput';
 import type {
   StatusReturn,
@@ -94,23 +95,24 @@ function Room(): JSX.Element {
     <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Text>Room: {roomId}</Text>
 
-      <ScrollArea
-        style={{ height: '100%' }}
-        viewportRef={messagesViewport}
-      >
+      <ScrollArea style={{ height: '100%' }} viewportRef={messagesViewport}>
         {messages.map((msg) => {
           const { id, type, username, role, text, timestamp } = msg;
 
-          return (
-            <MessageItem
-              key={id}
-              id={id}
-              username={username}
-              role={role}
-              text={text}
-              timestamp={timestamp}
-            />
-          );
+          if (type === 'message') {
+            return (
+              <MessageItem
+                key={id}
+                id={id}
+                username={username}
+                role={role}
+                text={text}
+                timestamp={timestamp}
+              />
+            );
+          } else {
+            return <SystemMessageItem key={id} id={id} text={text} />;
+          }
         })}
       </ScrollArea>
 
