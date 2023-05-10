@@ -7,22 +7,20 @@ import {
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import { useAuth } from '../../hooks';
 import SendMessageInput from '../SendMessageInput';
 import type {
   StatusReturn,
   Message,
-  Command,
   WsErrorObject,
 } from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const { role } = useAuth();
 
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const messagesViewport = useRef<HTMLDivElement>(null);
   const readyToLeave = useRef(false);
 
   useEffect(() => {
@@ -46,6 +44,12 @@ function Room(): JSX.Element {
     // ?: think about moving it outside
     function updateMessages(msg: Message) {
       setMessages((prevMessages) => [...prevMessages, msg]);
+      if (messagesViewport.current) {
+        messagesViewport.current.scrollTo({
+          top: messagesViewport.current.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
     }
 
     MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
@@ -85,38 +89,11 @@ function Room(): JSX.Element {
     };
   }, []);
 
-  const handleSendCommand = (commandText: string) => {
-    const commandsToEvents = {
-      kick: CLIENT_MESSAGES.KICK,
-      mute: CLIENT_MESSAGES.MUTE,
-      ban: CLIENT_MESSAGES.BAN,
-    };
-
-    const splitCommand = commandText.split(' ');
-    const [commandName, ...commandArgs] = splitCommand;
-
-    // TODO: show info on screen
-    if (commandName in commandsToEvents && role === 'ADMIN') {
-      const commandToSend = commandsToEvents[commandName as Command];
-
-      MessageClient.emit(
-        commandToSend,
-        ...commandArgs,
-        (status: StatusReturn) => {
-          const { success, message } = status;
-          if (!success) {
-            alert(message);
-          }
-        }
-      );
-    }
-  };
-
   return (
     <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Text>Room: {roomId}</Text>
 
-      <ScrollArea style={{ height: '100%' }}>
+      <ScrollArea style={{ height: '100%' }} viewportRef={messagesViewport}>
         {messages.map((msg) => {
           const { id, username, role, text, timestamp } = msg;
 
