@@ -58,6 +58,7 @@ function Login(): JSX.Element {
             <Input
               icon={<IconAt />}
               placeholder="Your email"
+              type="email"
               required
               value={email}
               onChange={handleEmailChange}

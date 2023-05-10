@@ -68,6 +68,7 @@ function Register(): JSX.Element {
             <Input
               icon={<IconAt />}
               placeholder="Your email"
+              type="email"
               required
               value={email}
               onChange={handleEmailChange}
