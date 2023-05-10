@@ -82,6 +82,33 @@ function Room(): JSX.Element {
     };
   });
 
+  // handle command results
+  useEffect(() => {
+    function handleGotKicked() {
+      toast('You got kicked from this room!', { type: 'error' });
+      navigate('/rooms');
+    }
+
+    function handleGotMuted(time: number) {
+      toast(`You got muted for ${time} seconds.`, { type: 'error' });
+    }
+
+    function handleGotBanned(time: number) {
+      toast(`You got banned for ${time} seconds.`, { type: 'error' });
+      navigate('/');
+    }
+
+    MessageClient.on(SERVER_MESSAGES.GOT_KICKED, handleGotKicked);
+    MessageClient.on(SERVER_MESSAGES.GOT_MUTED, handleGotMuted);
+    MessageClient.on(SERVER_MESSAGES.GOT_BANNED, handleGotBanned);
+
+    return () => {
+      MessageClient.off(SERVER_MESSAGES.GOT_KICKED, handleGotKicked);
+      MessageClient.off(SERVER_MESSAGES.GOT_MUTED, handleGotMuted);
+      MessageClient.off(SERVER_MESSAGES.GOT_BANNED, handleGotBanned);
+    };
+  }, [navigate]);
+
   useEffect(() => {
     return () => {
       if (readyToLeave.current) {

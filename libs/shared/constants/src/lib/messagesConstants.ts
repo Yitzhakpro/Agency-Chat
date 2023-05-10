@@ -12,6 +12,9 @@ export const CLIENT_MESSAGES = {
 
 export const SERVER_MESSAGES = {
   MESSAGE_SENT: 'MESSAGE_SENT',
+  GOT_KICKED: 'GOT_KICKED',
+  GOT_MUTED: 'GOT_MUTED',
+  GOT_BANNED: 'GOT_BANNED',
 };
 
 export const EXCEPTIONS = {
