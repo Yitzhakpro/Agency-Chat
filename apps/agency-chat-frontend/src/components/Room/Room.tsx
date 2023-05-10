@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Text, ScrollArea, Box } from '@mantine/core';
 import {
   CLIENT_MESSAGES,
   EXCEPTIONS,
@@ -7,6 +8,7 @@ import {
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import { useAuth } from '../../hooks';
+import SendMessageInput from '../SendMessageInput';
 import type {
   StatusReturn,
   Message,
@@ -19,7 +21,6 @@ function Room(): JSX.Element {
   const navigate = useNavigate();
   const { role } = useAuth();
 
-  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
 
   const readyToLeave = useRef(false);
@@ -111,46 +112,28 @@ function Room(): JSX.Element {
     }
   };
 
-  // TODO: indicate failure of sending
-  const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-
-    if (message.startsWith('/')) {
-      handleSendCommand(message.slice(1));
-    } else {
-      MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
-    }
-    setMessage('');
-  };
-
   return (
-    <div>
-      <h1>room: {roomId}</h1>
+    <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Text>Room: {roomId}</Text>
 
-      {messages.map((msg) => {
-        const { id, username, role, text, timestamp } = msg;
+      <ScrollArea style={{ height: '100%' }}>
+        {messages.map((msg) => {
+          const { id, username, role, text, timestamp } = msg;
 
-        return (
-          <div key={id}>
-            <p>{id}</p>
-            <p>{username}</p>
-            <p>{role}</p>
-            <p>{text}</p>
-            <p>{timestamp.toString()}</p>
-          </div>
-        );
-      })}
+          return (
+            <div style={{ display: 'block' }} key={id}>
+              <p>{id}</p>
+              <p>{username}</p>
+              <p>{role}</p>
+              <Text>{text}</Text>
+              <p>{timestamp.toString()}</p>
+            </div>
+          );
+        })}
+      </ScrollArea>
 
-      <form onSubmit={handleSendMessage}>
-        <input
-          type="text"
-          placeholder="message here"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button type="submit">Send Message</button>
-      </form>
-    </div>
+      <SendMessageInput />
+    </Box>
   );
 }
 

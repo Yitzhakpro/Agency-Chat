@@ -29,6 +29,12 @@ function Layout(): JSX.Element {
     <AppShell
       header={<Header />}
       styles={(theme) => ({
+        root: {
+          height: '100%',
+        },
+        body: {
+          height: '100%',
+        },
         main: {
           backgroundColor:
             theme.colorScheme === 'dark'
