@@ -35,6 +35,7 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
 
+  // TODO: setup swagger only on dev
   const config = new DocumentBuilder()
     .setTitle('Agency Chat Backend')
     .setDescription('Agency Chat API Routes')

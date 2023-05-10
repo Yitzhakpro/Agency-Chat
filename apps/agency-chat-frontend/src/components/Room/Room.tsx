@@ -1,27 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Text, ScrollArea, Box, Center } from '@mantine/core';
 import {
   CLIENT_MESSAGES,
   EXCEPTIONS,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
-import { useAuth } from '../../hooks';
+import MessageItem from '../MessageItem';
+import SystemMessageItem from '../SystemMessageItem';
+import SendMessageInput from '../SendMessageInput';
 import type {
   StatusReturn,
   Message,
-  Command,
   WsErrorObject,
 } from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const { role } = useAuth();
 
-  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const messagesViewport = useRef<HTMLDivElement>(null);
   const readyToLeave = useRef(false);
 
   useEffect(() => {
@@ -33,8 +35,8 @@ function Room(): JSX.Element {
           const { success, message } = status;
 
           if (!success) {
-            alert(`Cant connect to this room, reason: ${message}`);
-            navigate('/rooms');
+            toast(message, { type: 'error' });
+            navigate('/404');
           }
         }
       );
@@ -45,6 +47,12 @@ function Room(): JSX.Element {
     // ?: think about moving it outside
     function updateMessages(msg: Message) {
       setMessages((prevMessages) => [...prevMessages, msg]);
+      if (messagesViewport.current) {
+        messagesViewport.current.scrollTo({
+          top: messagesViewport.current.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
     }
 
     MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
@@ -63,7 +71,7 @@ function Room(): JSX.Element {
         type === EXCEPTIONS.COMMAND_ERROR ||
         type === EXCEPTIONS.MESSAGE_ERROR
       ) {
-        alert(message);
+        toast(message, { type: 'error' });
       }
     }
 
@@ -84,73 +92,39 @@ function Room(): JSX.Element {
     };
   }, []);
 
-  const handleSendCommand = (commandText: string) => {
-    const commandsToEvents = {
-      kick: CLIENT_MESSAGES.KICK,
-      mute: CLIENT_MESSAGES.MUTE,
-      ban: CLIENT_MESSAGES.BAN,
-    };
-
-    const splitCommand = commandText.split(' ');
-    const [commandName, ...commandArgs] = splitCommand;
-
-    // TODO: show info on screen
-    if (commandName in commandsToEvents && role === 'ADMIN') {
-      const commandToSend = commandsToEvents[commandName as Command];
-
-      MessageClient.emit(
-        commandToSend,
-        ...commandArgs,
-        (status: StatusReturn) => {
-          const { success, message } = status;
-          if (!success) {
-            alert(message);
-          }
-        }
-      );
-    }
-  };
-
-  // TODO: indicate failure of sending
-  const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-
-    if (message.startsWith('/')) {
-      handleSendCommand(message.slice(1));
-    } else {
-      MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
-    }
-    setMessage('');
-  };
-
   return (
-    <div>
-      <h1>room: {roomId}</h1>
+    <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Center>
+        <Text>Room: {roomId}</Text>
+      </Center>
 
-      {messages.map((msg) => {
-        const { id, username, role, text, timestamp } = msg;
+      <ScrollArea
+        style={{ height: '100%' }}
+        mt="sm"
+        viewportRef={messagesViewport}
+      >
+        {messages.map((msg) => {
+          const { id, type, username, role, text, timestamp } = msg;
 
-        return (
-          <div key={id}>
-            <p>{id}</p>
-            <p>{username}</p>
-            <p>{role}</p>
-            <p>{text}</p>
-            <p>{timestamp.toString()}</p>
-          </div>
-        );
-      })}
+          if (type === 'message') {
+            return (
+              <MessageItem
+                key={id}
+                id={id}
+                username={username}
+                role={role}
+                text={text}
+                timestamp={timestamp}
+              />
+            );
+          } else {
+            return <SystemMessageItem key={id} id={id} text={text} />;
+          }
+        })}
+      </ScrollArea>
 
-      <form onSubmit={handleSendMessage}>
-        <input
-          type="text"
-          placeholder="message here"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button type="submit">Send Message</button>
-      </form>
-    </div>
+      <SendMessageInput />
+    </Box>
   );
 }
 

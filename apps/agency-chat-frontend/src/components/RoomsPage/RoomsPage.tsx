@@ -1,60 +1,56 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Affix, Button, Transition, rem } from '@mantine/core';
+import { useWindowScroll } from '@mantine/hooks';
+import { IconArrowUp } from '@tabler/icons-react';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
+import RoomsControls from '../RoomsControls';
 import RoomsList from '../RoomsList';
-import type {
-  GetRoomsReturn,
-  StatusReturn,
-} from '@agency-chat/shared/interfaces';
+import type { GetRoomsReturn } from '@agency-chat/shared/interfaces';
 
 function RoomsPage(): JSX.Element {
-  const navigate = useNavigate();
+  const [scroll, scrollTo] = useWindowScroll();
 
-  const [createRoomName, setCreateRoomName] = useState('');
   const [rooms, setRooms] = useState<string[]>([]);
 
   useEffect(() => {
+    getRooms();
+  }, []);
+
+  const getRooms = (): void => {
     MessageClient.emit(
       CLIENT_MESSAGES.GET_ROOMS,
       (returnedRooms: GetRoomsReturn) => {
         setRooms(returnedRooms);
       }
     );
-  }, []);
+  };
 
-  const handleCreateRoom = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    MessageClient.emit(
-      CLIENT_MESSAGES.CREATE_ROOM,
-      createRoomName,
-      (status: StatusReturn) => {
-        const { success, message } = status;
-
-        if (success) {
-          navigate(`/room/${createRoomName}`);
-        } else {
-          // TODO: better error visual
-          alert(`Can't create room: ${createRoomName}, reason: ${message}`);
-        }
-      }
-    );
+  const scrollToTop = (): void => {
+    scrollTo({ y: 0 });
   };
 
   return (
-    <div>
-      <form onSubmit={handleCreateRoom}>
-        <input
-          type="text"
-          placeholder="create-room-name"
-          value={createRoomName}
-          onChange={(e) => setCreateRoomName(e.target.value)}
-        />
-        <button type="submit">create</button>
-      </form>
+    <>
+      <RoomsControls onRefresh={getRooms} />
+
       <RoomsList rooms={rooms} />
-    </div>
+
+      <Affix position={{ bottom: rem(10), right: rem(10) }}>
+        <Transition transition="slide-up" mounted={scroll.y > 0}>
+          {(transitionStyles) => (
+            <Button
+              leftIcon={<IconArrowUp size="1rem" />}
+              variant="light"
+              style={transitionStyles}
+              onClick={scrollToTop}
+            >
+              Scroll to top
+            </Button>
+          )}
+        </Transition>
+      </Affix>
+    </>
   );
 }
 

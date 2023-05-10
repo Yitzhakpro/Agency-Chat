@@ -173,7 +173,7 @@ export class MessagesGateway
 
   @SubscribeMessage(CLIENT_MESSAGES.LEAVE_ROOM)
   handleLeaveRoom(@ConnectedSocket() client: AuthenticatedSocket): void {
-    this.onClientLeft(client, 'LEFT_ROOM');
+    this.onClientLeft(client, CLIENT_MESSAGES.LEAVE_ROOM);
   }
 
   @SubscribeMessage(CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM)
@@ -198,7 +198,7 @@ export class MessagesGateway
   ): void {
     const { id, username, role } = client.data.user;
 
-    if (!this.isAlreadyInARoom(client)) {
+    if (!this.isAlreadyInARoom(client) && !message) {
       return;
     }
 
@@ -249,7 +249,7 @@ export class MessagesGateway
       timestamp: new Date(),
     };
 
-    kickedUserClient.disconnect();
+    kickedUserClient.leave(currentRoom);
 
     this.server
       .to(currentRoom)
@@ -328,6 +328,7 @@ export class MessagesGateway
       timestamp: new Date(),
     };
 
+    bannedUserClient.leave(currentRoom);
     bannedUserClient.disconnect();
 
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, banMessage);
@@ -382,7 +383,7 @@ export class MessagesGateway
     return next();
   }
 
-  private async onClientLeft(client: AuthenticatedSocket, _reason: string) {
+  private async onClientLeft(client: AuthenticatedSocket, reason: string) {
     const { id, username, role } = client.data.user;
 
     if (this.isAlreadyInARoom(client)) {
@@ -391,6 +392,8 @@ export class MessagesGateway
       console.log(
         `${id}-${username} [${role}] disconnected from room: ${roomName}`
       );
+
+      client.leave(roomName);
 
       const disconnectMessage: Message = {
         type: 'user_left',
@@ -407,7 +410,7 @@ export class MessagesGateway
     }
 
     // remove logged in lock from redis
-    if (client.data.user) {
+    if (reason !== CLIENT_MESSAGES.LEAVE_ROOM && client.data.user) {
       await this.sessionClient.del(`users:${id}`);
     }
   }
