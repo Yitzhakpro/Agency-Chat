@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { Auth } from '../services';
 import { AuthContext } from '../context';
 import type { UserStateInfo } from '../types';
@@ -59,6 +60,8 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
       const loginResp = await Auth.login(email, password);
       const { id, email: userEmail, username, role, createdAt } = loginResp;
 
+      toast('Logged in successfully!', { type: 'success' });
+
       setUserInfo({
         isLoggedIn: true,
         id,
@@ -70,6 +73,7 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
 
       return true;
     } catch (error) {
+      toast('Login failed, check your username/password', { type: 'error' });
       setUserInfo({
         isLoggedIn: false,
         id: '',
@@ -107,6 +111,8 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
         createdAt,
       } = registerResp;
 
+      toast('Registered successfully!', { type: 'success' });
+
       setUserInfo({
         isLoggedIn: true,
         id,
@@ -118,6 +124,8 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
 
       return true;
     } catch (error) {
+      toast('Register failed, try again later!', { type: 'error' });
+
       setUserInfo({
         isLoggedIn: false,
         id: '',
