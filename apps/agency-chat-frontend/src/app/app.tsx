@@ -47,6 +47,7 @@ export function App() {
                 <Route path="/rooms" element={<RoomsPage />} />
                 <Route path="/room/:roomId" element={<Room />} />
               </Route>
+              <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

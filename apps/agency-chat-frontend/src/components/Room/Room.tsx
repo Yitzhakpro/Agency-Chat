@@ -35,9 +35,8 @@ function Room(): JSX.Element {
           const { success, message } = status;
 
           if (!success) {
-            // TODO: think about how to display this
-            alert(`Cant connect to this room, reason: ${message}`);
-            navigate('/rooms');
+            toast(message, { type: 'error' });
+            navigate('/404');
           }
         }
       );
