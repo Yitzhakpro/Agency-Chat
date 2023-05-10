@@ -46,6 +46,10 @@ function SendMessageInput(): JSX.Element {
   // TODO: indicate failure of sending
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    // TODO: handle server side too
+    if (!message) {
+      return;
+    }
 
     if (message.startsWith('/')) {
       handleSendCommand(message.slice(1));
@@ -64,6 +68,7 @@ function SendMessageInput(): JSX.Element {
         style={{ flex: 9 }}
         type="text"
         placeholder="Enter your message"
+        required
         value={message}
         onChange={handleChangeMessage}
       />
