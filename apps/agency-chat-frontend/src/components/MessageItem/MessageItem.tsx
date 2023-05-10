@@ -27,7 +27,7 @@ function MessageItem(props: IMessageItemProps): JSX.Element {
         {/* TODO: make text wrap to next line */}
         <Text>{text}</Text>
       </Box>
-      <Divider my="xs" />
+      <Divider my="sm" />
     </>
   );
 }
