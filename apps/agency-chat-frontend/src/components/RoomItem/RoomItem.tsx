@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button, Divider, Paper, Text } from '@mantine/core';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
@@ -23,8 +24,9 @@ function RoomItem(props: IRoomItemProps): JSX.Element {
         if (success) {
           navigate(`/room/${roomName}`);
         } else {
-          // TODO: better error visual
-          alert(`Can't connect to room: ${roomName}, reason: ${message}`);
+          toast(`Can't connect to room: ${roomName}, reason: ${message}`, {
+            type: 'error',
+          });
         }
       }
     );

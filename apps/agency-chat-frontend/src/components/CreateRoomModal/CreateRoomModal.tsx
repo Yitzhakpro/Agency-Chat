@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button, Center, Input, Modal } from '@mantine/core';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
@@ -35,8 +36,9 @@ function CreateRoomModal(props: ICreateRoomModalProps): JSX.Element {
         if (success) {
           navigate(`/room/${createRoomName}`);
         } else {
-          // TODO: better error visual
-          alert(`Can't create room: ${createRoomName}, reason: ${message}`);
+          toast(`Can't create room: ${createRoomName}, reason: ${message}`, {
+            type: 'error',
+          });
         }
       }
     );

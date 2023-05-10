@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { AppShell } from '@mantine/core';
 import { useAuth } from '../../hooks';
 import { MessageClient } from '../../services';
@@ -14,8 +15,7 @@ function Layout(): JSX.Element {
     }
 
     MessageClient.on('connect_error', (err) => {
-      // TODO: better handle
-      alert(err.message);
+      toast(err.message, { type: 'error' });
     });
 
     return () => {

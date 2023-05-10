@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import {
   Login,
@@ -13,6 +14,7 @@ import {
 } from '../components';
 import { AuthProvider } from '../providers';
 import type { ColorScheme } from '@mantine/core';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function App() {
   const [colorScheme, setColorScheme] = useState<ColorScheme>(
@@ -49,6 +51,10 @@ export function App() {
             </Route>
           </Routes>
         </AuthProvider>
+        <ToastContainer
+          theme={colorScheme === 'dark' ? 'dark' : 'light'}
+          position="bottom-right"
+        />
       </MantineProvider>
     </ColorSchemeProvider>
   );

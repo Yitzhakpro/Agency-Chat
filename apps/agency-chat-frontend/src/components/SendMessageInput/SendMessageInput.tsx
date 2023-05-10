@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { Button, Divider, Input } from '@mantine/core';
 import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { useAuth } from '../../hooks';
@@ -36,7 +37,7 @@ function SendMessageInput(): JSX.Element {
         (status: StatusReturn) => {
           const { success, message } = status;
           if (!success) {
-            alert(message);
+            toast(message, { type: 'error' });
           }
         }
       );

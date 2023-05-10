@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Text, ScrollArea, Box } from '@mantine/core';
 import {
   CLIENT_MESSAGES,
@@ -34,6 +35,7 @@ function Room(): JSX.Element {
           const { success, message } = status;
 
           if (!success) {
+            // TODO: think about how to display this
             alert(`Cant connect to this room, reason: ${message}`);
             navigate('/rooms');
           }
@@ -70,7 +72,7 @@ function Room(): JSX.Element {
         type === EXCEPTIONS.COMMAND_ERROR ||
         type === EXCEPTIONS.MESSAGE_ERROR
       ) {
-        alert(message);
+        toast(message, { type: 'error' });
       }
     }
 
