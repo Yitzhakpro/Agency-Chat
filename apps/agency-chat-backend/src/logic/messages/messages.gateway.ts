@@ -198,7 +198,7 @@ export class MessagesGateway
   ): void {
     const { id, username, role } = client.data.user;
 
-    if (!this.isAlreadyInARoom(client)) {
+    if (!this.isAlreadyInARoom(client) && !message) {
       return;
     }
 
@@ -249,7 +249,7 @@ export class MessagesGateway
       timestamp: new Date(),
     };
 
-    kickedUserClient.disconnect();
+    kickedUserClient.leave(currentRoom);
 
     this.server
       .to(currentRoom)
@@ -328,6 +328,7 @@ export class MessagesGateway
       timestamp: new Date(),
     };
 
+    bannedUserClient.leave(currentRoom);
     bannedUserClient.disconnect();
 
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, banMessage);

@@ -47,7 +47,6 @@ function SendMessageInput(): JSX.Element {
   // TODO: indicate failure of sending
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    // TODO: handle server side too
     if (!message) {
       return;
     }
