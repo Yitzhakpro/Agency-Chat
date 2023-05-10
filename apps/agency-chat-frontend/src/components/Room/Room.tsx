@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Text, ScrollArea, Box } from '@mantine/core';
+import { Text, ScrollArea, Box, Center } from '@mantine/core';
 import {
   CLIENT_MESSAGES,
   EXCEPTIONS,
@@ -94,9 +94,15 @@ function Room(): JSX.Element {
 
   return (
     <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Text>Room: {roomId}</Text>
+      <Center>
+        <Text>Room: {roomId}</Text>
+      </Center>
 
-      <ScrollArea style={{ height: '100%' }} viewportRef={messagesViewport}>
+      <ScrollArea
+        style={{ height: '100%' }}
+        mt="sm"
+        viewportRef={messagesViewport}
+      >
         {messages.map((msg) => {
           const { id, type, username, role, text, timestamp } = msg;
 
