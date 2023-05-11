@@ -1,15 +1,7 @@
 import { useState } from 'react';
-import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Center,
-  Group,
-  Input,
-  PasswordInput,
-  Text,
-} from '@mantine/core';
+import { Box, Button, Center, Group, Input, PasswordInput, Text } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
+import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Login(): JSX.Element {
@@ -20,21 +12,15 @@ function Login(): JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleEmailChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(event.target.value);
   };
 
-  const handlePasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setPassword(event.target.value);
   };
 
-  const handleSubmitLogin = async (
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const handleSubmitLogin = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
     const loggedInSuccessfully = await login(email, password);
@@ -76,11 +62,8 @@ function Login(): JSX.Element {
 
           <Group mt="lg" style={{ justifyContent: 'space-between' }}>
             <Text>
-              Don't have an account?{' '}
-              <Link
-                style={{ textDecoration: 'none', color: '#228be6' }}
-                to="/register"
-              >
+              Don&apos;t have an account?{' '}
+              <Link style={{ textDecoration: 'none', color: '#228be6' }} to="/register">
                 Register
               </Link>
             </Text>

@@ -8,11 +8,11 @@ const redisPort = config.database.redis.port;
 
 //TODO: maybe create nestjs redis stuff
 export const sessionClient = createClient({
-  database: 0,
-  url: `redis://${redisHost}:${redisPort}`,
+	database: 0,
+	url: `redis://${redisHost}:${redisPort}`,
 });
 
 export const userStatusClient = createClient({
-  database: 1,
-  url: `redis://${redisHost}:${redisPort}`,
+	database: 1,
+	url: `redis://${redisHost}:${redisPort}`,
 });

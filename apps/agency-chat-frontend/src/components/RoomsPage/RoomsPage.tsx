@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
+import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { Affix, Button, Transition, rem } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { IconArrowUp } from '@tabler/icons-react';
-import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import RoomsControls from '../RoomsControls';
 import RoomsList from '../RoomsList';
@@ -18,12 +18,9 @@ function RoomsPage(): JSX.Element {
   }, []);
 
   const getRooms = (): void => {
-    MessageClient.emit(
-      CLIENT_MESSAGES.GET_ROOMS,
-      (returnedRooms: GetRoomsReturn) => {
-        setRooms(returnedRooms);
-      }
-    );
+    MessageClient.emit(CLIENT_MESSAGES.GET_ROOMS, (returnedRooms: GetRoomsReturn) => {
+      setRooms(returnedRooms);
+    });
   };
 
   const scrollToTop = (): void => {

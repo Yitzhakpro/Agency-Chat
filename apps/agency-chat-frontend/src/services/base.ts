@@ -1,6 +1,6 @@
 import { createHttpClient } from '@agency-chat/shared/util-http-client';
-import type { AxiosInstance, CreateAxiosDefaults } from 'axios';
 import { config } from '../config';
+import type { AxiosInstance, CreateAxiosDefaults } from 'axios';
 
 export class BaseService {
   protected client: AxiosInstance;

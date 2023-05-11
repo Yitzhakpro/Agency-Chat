@@ -1,7 +1,7 @@
+import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
+import { Button, Divider, Paper, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, Divider, Paper, Text } from '@mantine/core';
-import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import type { StatusReturn } from '@agency-chat/shared/interfaces';
 
@@ -15,21 +15,17 @@ function RoomItem(props: IRoomItemProps): JSX.Element {
   const navigate = useNavigate();
 
   const handleJoin = (): void => {
-    MessageClient.emit(
-      CLIENT_MESSAGES.JOIN_ROOM,
-      roomName,
-      (status: StatusReturn) => {
-        const { success, message } = status;
+    MessageClient.emit(CLIENT_MESSAGES.JOIN_ROOM, roomName, (status: StatusReturn) => {
+      const { success, message } = status;
 
-        if (success) {
-          navigate(`/room/${roomName}`);
-        } else {
-          toast(`Can't connect to room: ${roomName}, reason: ${message}`, {
-            type: 'error',
-          });
-        }
+      if (success) {
+        navigate(`/room/${roomName}`);
+      } else {
+        toast(`Can't connect to room: ${roomName}, reason: ${message}`, {
+          type: 'error',
+        });
       }
-    );
+    });
   };
 
   return (

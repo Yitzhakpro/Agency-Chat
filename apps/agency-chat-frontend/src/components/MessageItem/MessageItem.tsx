@@ -14,9 +14,7 @@ function MessageItem(props: IMessageItemProps): JSX.Element {
 
   return (
     <>
-      <Box
-        style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
-      >
+      <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <Text weight={700}>[ {username} ]</Text>
         {role !== 'USER' && (
           <Badge ml="xs" color="red">

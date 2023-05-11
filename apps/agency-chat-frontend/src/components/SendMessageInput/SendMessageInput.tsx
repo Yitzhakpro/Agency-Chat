@@ -1,11 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
-import { toast } from 'react-toastify';
+import { COMMANDS, CLIENT_MESSAGES, SERVER_MESSAGES } from '@agency-chat/shared/constants';
 import { Autocomplete, Button, Divider } from '@mantine/core';
-import {
-  COMMANDS,
-  CLIENT_MESSAGES,
-  SERVER_MESSAGES,
-} from '@agency-chat/shared/constants';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks';
 import { MessageClient } from '../../services';
 import type { StatusReturn, Command } from '@agency-chat/shared/interfaces';
@@ -21,8 +17,7 @@ function SendMessageInput(): JSX.Element {
   const mutedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const userAuthorized = role === 'ADMIN';
-  const commandsList =
-    userAuthorized && message.startsWith('/') ? COMMANDS_WITH_PREFIX : [];
+  const commandsList = userAuthorized && message.startsWith('/') ? COMMANDS_WITH_PREFIX : [];
 
   const handleChangeMessage = (value: string): void => {
     setMessage(value);
@@ -41,16 +36,12 @@ function SendMessageInput(): JSX.Element {
     if (commandName in commandsToEvents && userAuthorized) {
       const commandToSend = commandsToEvents[commandName as Command];
 
-      MessageClient.emit(
-        commandToSend,
-        ...commandArgs,
-        (status: StatusReturn) => {
-          const { success, message } = status;
-          if (!success) {
-            toast(message, { type: 'error' });
-          }
+      MessageClient.emit(commandToSend, ...commandArgs, (status: StatusReturn) => {
+        const { success, message } = status;
+        if (!success) {
+          toast(message, { type: 'error' });
         }
-      );
+      });
     }
   };
 
@@ -89,10 +80,7 @@ function SendMessageInput(): JSX.Element {
   }, []);
 
   return (
-    <form
-      style={{ display: 'flex', flexDirection: 'row' }}
-      onSubmit={handleSendMessage}
-    >
+    <form style={{ display: 'flex', flexDirection: 'row' }} onSubmit={handleSendMessage}>
       <Autocomplete
         style={{ flex: 9 }}
         type="text"
@@ -104,12 +92,7 @@ function SendMessageInput(): JSX.Element {
         onChange={handleChangeMessage}
       />
       <Divider orientation="vertical" ml="xs" mr="xs" />
-      <Button
-        style={{ flex: 1 }}
-        variant="light"
-        type="submit"
-        disabled={isDisabled}
-      >
+      <Button style={{ flex: 1 }} variant="light" type="submit" disabled={isDisabled}>
         Send
       </Button>
     </form>

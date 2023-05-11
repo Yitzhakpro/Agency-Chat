@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
+import { Button, Center, Input, Modal } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, Center, Input, Modal } from '@mantine/core';
-import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import type { StatusReturn } from '@agency-chat/shared/interfaces';
 
@@ -18,30 +18,24 @@ function CreateRoomModal(props: ICreateRoomModalProps): JSX.Element {
 
   const [createRoomName, setCreateRoomName] = useState('');
 
-  const handleChangeCreateRoomName = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeCreateRoomName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCreateRoomName(event.target.value);
   };
 
   const handleCreateRoom = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    MessageClient.emit(
-      CLIENT_MESSAGES.CREATE_ROOM,
-      createRoomName,
-      (status: StatusReturn) => {
-        const { success, message } = status;
+    MessageClient.emit(CLIENT_MESSAGES.CREATE_ROOM, createRoomName, (status: StatusReturn) => {
+      const { success, message } = status;
 
-        if (success) {
-          navigate(`/room/${createRoomName}`);
-        } else {
-          toast(`Can't create room: ${createRoomName}, reason: ${message}`, {
-            type: 'error',
-          });
-        }
+      if (success) {
+        navigate(`/room/${createRoomName}`);
+      } else {
+        toast(`Can't create room: ${createRoomName}, reason: ${message}`, {
+          type: 'error',
+        });
       }
-    );
+    });
   };
 
   return (
@@ -63,11 +57,7 @@ function CreateRoomModal(props: ICreateRoomModalProps): JSX.Element {
           />
         </Input.Wrapper>
         <Center mt="lg">
-          <Button
-            variant="light"
-            type="submit"
-            disabled={createRoomName.length === 0}
-          >
+          <Button variant="light" type="submit" disabled={createRoomName.length === 0}>
             Create Room
           </Button>
         </Center>

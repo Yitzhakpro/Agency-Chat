@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import {
   Login,
   Register,
@@ -28,15 +28,8 @@ export function App() {
   };
 
   return (
-    <ColorSchemeProvider
-      colorScheme={colorScheme}
-      toggleColorScheme={toggleColorScheme}
-    >
-      <MantineProvider
-        theme={{ colorScheme }}
-        withGlobalStyles
-        withNormalizeCSS
-      >
+    <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+      <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
         <AuthProvider>
           <Routes>
             <Route element={<Layout />}>

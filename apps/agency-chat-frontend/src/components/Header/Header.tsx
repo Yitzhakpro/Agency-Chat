@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import {
   ActionIcon,
   Group,
@@ -7,6 +6,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { IconSun, IconMoon } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Header(): JSX.Element {
@@ -33,12 +33,7 @@ function Header(): JSX.Element {
 
         <Group>
           {isLoggedIn && <Text>Welcome back, {username}</Text>}
-          <ActionIcon
-            variant="outline"
-            size="md"
-            radius="md"
-            onClick={toggleScheme}
-          >
+          <ActionIcon variant="outline" size="md" radius="md" onClick={toggleScheme}>
             {colorScheme === 'dark' ? <IconSun /> : <IconMoon />}
           </ActionIcon>
         </Group>

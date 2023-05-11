@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
+import { AppShell } from '@mantine/core';
 import { Outlet } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { AppShell } from '@mantine/core';
 import { useAuth } from '../../hooks';
 import { MessageClient } from '../../services';
 import Header from '../Header';
@@ -37,9 +37,7 @@ function Layout(): JSX.Element {
         },
         main: {
           backgroundColor:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[8]
-              : theme.colors.gray[0],
+            theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
         },
       })}
     >

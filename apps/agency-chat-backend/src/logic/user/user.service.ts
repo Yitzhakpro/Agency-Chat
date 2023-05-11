@@ -4,71 +4,71 @@ import { CreateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+	constructor(private readonly prismaService: PrismaService) {}
 
-  public async getById(id: string) {
-    const user = await this.prismaService.users.findUnique({ where: { id } });
+	public async getById(id: string) {
+		const user = await this.prismaService.users.findUnique({ where: { id } });
 
-    if (!user) {
-      return null;
-    }
+		if (!user) {
+			return null;
+		}
 
-    return user;
-  }
+		return user;
+	}
 
-  public async getByEmail(email: string) {
-    const user = await this.prismaService.users.findUnique({
-      where: { email },
-    });
+	public async getByEmail(email: string) {
+		const user = await this.prismaService.users.findUnique({
+			where: { email },
+		});
 
-    if (!user) {
-      return null;
-    }
+		if (!user) {
+			return null;
+		}
 
-    return user;
-  }
+		return user;
+	}
 
-  public async getByUsername(username: string) {
-    const user = await this.prismaService.users.findUnique({
-      where: { username },
-    });
+	public async getByUsername(username: string) {
+		const user = await this.prismaService.users.findUnique({
+			where: { username },
+		});
 
-    if (!user) {
-      return null;
-    }
+		if (!user) {
+			return null;
+		}
 
-    return user;
-  }
+		return user;
+	}
 
-  public async create(user: CreateUserDto) {
-    const createdUser = this.prismaService.users.create({
-      data: user,
-    });
+	public async create(user: CreateUserDto) {
+		const createdUser = this.prismaService.users.create({
+			data: user,
+		});
 
-    return createdUser;
-  }
+		return createdUser;
+	}
 
-  public async deleteById(id: string) {
-    const deletedUser = await this.prismaService.users.delete({
-      where: { id },
-    });
+	public async deleteById(id: string) {
+		const deletedUser = await this.prismaService.users.delete({
+			where: { id },
+		});
 
-    return deletedUser;
-  }
+		return deletedUser;
+	}
 
-  public async deleteByEmail(email: string) {
-    const deletedUser = await this.prismaService.users.delete({
-      where: { email },
-    });
+	public async deleteByEmail(email: string) {
+		const deletedUser = await this.prismaService.users.delete({
+			where: { email },
+		});
 
-    return deletedUser;
-  }
+		return deletedUser;
+	}
 
-  public async deleteByUsername(username) {
-    const deletedUser = await this.prismaService.users.delete({
-      where: { username },
-    });
+	public async deleteByUsername(username) {
+		const deletedUser = await this.prismaService.users.delete({
+			where: { username },
+		});
 
-    return deletedUser;
-  }
+		return deletedUser;
+	}
 }

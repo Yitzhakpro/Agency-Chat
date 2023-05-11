@@ -1,15 +1,7 @@
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Center,
-  Group,
-  Input,
-  PasswordInput,
-  Text,
-} from '@mantine/core';
+import { Box, Button, Center, Group, Input, PasswordInput, Text } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Register(): JSX.Element {
@@ -21,33 +13,23 @@ function Register(): JSX.Element {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleEmailChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(event.target.value);
   };
 
-  const handleUsernameChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setUsername(event.target.value);
   };
 
-  const handlePasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setPassword(event.target.value);
   };
 
-  const handleConfirmPasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setConfirmPassword(event.target.value);
   };
 
-  const handleSubmitRegister = async (
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const handleSubmitRegister = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
     const registeredSuccessfully = await register(email, username, password);
@@ -105,10 +87,7 @@ function Register(): JSX.Element {
           <Group mt="lg" style={{ justifyContent: 'space-between' }}>
             <Text>
               Have an account?{' '}
-              <Link
-                style={{ textDecoration: 'none', color: '#228be6' }}
-                to="/login"
-              >
+              <Link style={{ textDecoration: 'none', color: '#228be6' }} to="/login">
                 Login
               </Link>
             </Text>

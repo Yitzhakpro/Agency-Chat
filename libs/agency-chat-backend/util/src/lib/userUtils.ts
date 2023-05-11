@@ -3,7 +3,7 @@ import { Users } from '@prisma/client';
 import type { UserInfo } from '@agency-chat/shared/interfaces';
 
 export const getUserInfo = (user: Users): UserInfo => {
-  const { id, email, username, role, createdAt } = user;
+	const { id, email, username, role, createdAt } = user;
 
-  return { id, email, username, role, createdAt };
+	return { id, email, username, role, createdAt };
 };
