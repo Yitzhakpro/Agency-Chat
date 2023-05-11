@@ -33,12 +33,7 @@ function Header(): JSX.Element {
 
         <Group>
           {isLoggedIn && <Text>Welcome back, {username}</Text>}
-          <ActionIcon
-            variant="outline"
-            size="md"
-            radius="md"
-            onClick={toggleScheme}
-          >
+          <ActionIcon variant="outline" size="md" radius="md" onClick={toggleScheme}>
             {colorScheme === 'dark' ? <IconSun /> : <IconMoon />}
           </ActionIcon>
         </Group>

@@ -7,13 +7,4 @@ import Register from './Register';
 import Room from './Room';
 import RoomsPage from './RoomsPage';
 
-export {
-  Login,
-  Register,
-  Homepage,
-  NotFound,
-  Layout,
-  ProtectedLayout,
-  RoomsPage,
-  Room,
-};
+export { Login, Register, Homepage, NotFound, Layout, ProtectedLayout, RoomsPage, Room };

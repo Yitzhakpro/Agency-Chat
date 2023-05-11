@@ -9,9 +9,7 @@ function Homepage(): JSX.Element {
   };
 
   return (
-    <Center
-      style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-    >
+    <Center style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Text size="xl">Welcome To Agency Chat!</Text>
       <Container m="md">
         <Button variant="light" onClick={handleGetStarted}>

@@ -18,12 +18,9 @@ function RoomsPage(): JSX.Element {
   }, []);
 
   const getRooms = (): void => {
-    MessageClient.emit(
-      CLIENT_MESSAGES.GET_ROOMS,
-      (returnedRooms: GetRoomsReturn) => {
-        setRooms(returnedRooms);
-      }
-    );
+    MessageClient.emit(CLIENT_MESSAGES.GET_ROOMS, (returnedRooms: GetRoomsReturn) => {
+      setRooms(returnedRooms);
+    });
   };
 
   const scrollToTop = (): void => {

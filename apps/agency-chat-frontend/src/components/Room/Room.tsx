@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  CLIENT_MESSAGES,
-  EXCEPTIONS,
-  SERVER_MESSAGES,
-} from '@agency-chat/shared/constants';
+import { CLIENT_MESSAGES, EXCEPTIONS, SERVER_MESSAGES } from '@agency-chat/shared/constants';
 import { Text, ScrollArea, Box, Center } from '@mantine/core';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,11 +7,7 @@ import { MessageClient } from '../../services';
 import MessageItem from '../MessageItem';
 import SendMessageInput from '../SendMessageInput';
 import SystemMessageItem from '../SystemMessageItem';
-import type {
-  StatusReturn,
-  Message,
-  WsErrorObject,
-} from '@agency-chat/shared/interfaces';
+import type { StatusReturn, Message, WsErrorObject } from '@agency-chat/shared/interfaces';
 
 function Room(): JSX.Element {
   const { roomId } = useParams();
@@ -28,18 +20,14 @@ function Room(): JSX.Element {
 
   useEffect(() => {
     if (roomId) {
-      MessageClient.emit(
-        CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM,
-        roomId,
-        (status: StatusReturn) => {
-          const { success, message } = status;
+      MessageClient.emit(CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM, roomId, (status: StatusReturn) => {
+        const { success, message } = status;
 
-          if (!success) {
-            toast(message, { type: 'error' });
-            navigate('/404');
-          }
+        if (!success) {
+          toast(message, { type: 'error' });
+          navigate('/404');
         }
-      );
+      });
     }
   }, [navigate, roomId]);
 
@@ -67,10 +55,7 @@ function Room(): JSX.Element {
     function handleException(errorObj: WsErrorObject) {
       const { type, message } = errorObj;
 
-      if (
-        type === EXCEPTIONS.COMMAND_ERROR ||
-        type === EXCEPTIONS.MESSAGE_ERROR
-      ) {
+      if (type === EXCEPTIONS.COMMAND_ERROR || type === EXCEPTIONS.MESSAGE_ERROR) {
         toast(message, { type: 'error' });
       }
     }
@@ -125,11 +110,7 @@ function Room(): JSX.Element {
         <Text>Room: {roomId}</Text>
       </Center>
 
-      <ScrollArea
-        style={{ height: '100%' }}
-        mt="sm"
-        viewportRef={messagesViewport}
-      >
+      <ScrollArea style={{ height: '100%' }} mt="sm" viewportRef={messagesViewport}>
         {messages.map((msg) => {
           const { id, type, username, role, text, timestamp } = msg;
 

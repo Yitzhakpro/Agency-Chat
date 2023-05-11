@@ -1,9 +1,5 @@
 import { BaseService } from './base';
-import type {
-  LoginData,
-  RegisterData,
-  UserInfo,
-} from '@agency-chat/shared/interfaces';
+import type { LoginData, RegisterData, UserInfo } from '@agency-chat/shared/interfaces';
 import type { AxiosResponse } from 'axios';
 
 class AuthService extends BaseService {
@@ -24,14 +20,13 @@ class AuthService extends BaseService {
 
   public async login(email: string, password: string): Promise<UserInfo> {
     try {
-      const loginResponse = await this.client.post<
-        UserInfo,
-        AxiosResponse<UserInfo>,
-        LoginData
-      >('/login', {
-        email,
-        password,
-      });
+      const loginResponse = await this.client.post<UserInfo, AxiosResponse<UserInfo>, LoginData>(
+        '/login',
+        {
+          email,
+          password,
+        }
+      );
 
       return loginResponse.data;
     } catch (error) {
@@ -40,11 +35,7 @@ class AuthService extends BaseService {
     }
   }
 
-  public async register(
-    email: string,
-    username: string,
-    password: string
-  ): Promise<UserInfo> {
+  public async register(email: string, username: string, password: string): Promise<UserInfo> {
     try {
       const registerResponse = await this.client.post<
         UserInfo,

@@ -9,10 +9,8 @@ interface IRoomsControlsProps {
 function RoomsControls(props: IRoomsControlsProps): JSX.Element {
   const { onRefresh } = props;
 
-  const [
-    createRoomOpened,
-    { open: openCreateRoomModal, close: closeCreateRoomModal },
-  ] = useDisclosure(false);
+  const [createRoomOpened, { open: openCreateRoomModal, close: closeCreateRoomModal }] =
+    useDisclosure(false);
 
   const handleOpenCreateRoomModal = (): void => {
     openCreateRoomModal();

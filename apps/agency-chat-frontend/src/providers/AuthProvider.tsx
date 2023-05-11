@@ -87,11 +87,7 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
     }
   };
 
-  const register = async (
-    email: string,
-    username: string,
-    password: string
-  ): Promise<boolean> => {
+  const register = async (email: string, username: string, password: string): Promise<boolean> => {
     setUserInfo({
       isLoggedIn: false,
       id: '',
@@ -103,13 +99,7 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
 
     try {
       const registerResp = await Auth.register(email, username, password);
-      const {
-        id,
-        email: userEmail,
-        username: userUsername,
-        role,
-        createdAt,
-      } = registerResp;
+      const { id, email: userEmail, username: userUsername, role, createdAt } = registerResp;
 
       toast('Registered successfully!', { type: 'success' });
 

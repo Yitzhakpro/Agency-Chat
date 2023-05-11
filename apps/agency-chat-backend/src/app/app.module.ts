@@ -5,15 +5,15 @@ import { AuthModule, MessagesModule } from '../logic';
 import { AppController } from './app.controller';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      cache: true,
-      load: [configurations],
-    }),
-    AuthModule,
-    MessagesModule,
-  ],
-  controllers: [AppController],
+	imports: [
+		ConfigModule.forRoot({
+			isGlobal: true,
+			cache: true,
+			load: [configurations],
+		}),
+		AuthModule,
+		MessagesModule,
+	],
+	controllers: [AppController],
 })
 export class AppModule {}

@@ -18,30 +18,24 @@ function CreateRoomModal(props: ICreateRoomModalProps): JSX.Element {
 
   const [createRoomName, setCreateRoomName] = useState('');
 
-  const handleChangeCreateRoomName = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeCreateRoomName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCreateRoomName(event.target.value);
   };
 
   const handleCreateRoom = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    MessageClient.emit(
-      CLIENT_MESSAGES.CREATE_ROOM,
-      createRoomName,
-      (status: StatusReturn) => {
-        const { success, message } = status;
+    MessageClient.emit(CLIENT_MESSAGES.CREATE_ROOM, createRoomName, (status: StatusReturn) => {
+      const { success, message } = status;
 
-        if (success) {
-          navigate(`/room/${createRoomName}`);
-        } else {
-          toast(`Can't create room: ${createRoomName}, reason: ${message}`, {
-            type: 'error',
-          });
-        }
+      if (success) {
+        navigate(`/room/${createRoomName}`);
+      } else {
+        toast(`Can't create room: ${createRoomName}, reason: ${message}`, {
+          type: 'error',
+        });
       }
-    );
+    });
   };
 
   return (
@@ -63,11 +57,7 @@ function CreateRoomModal(props: ICreateRoomModalProps): JSX.Element {
           />
         </Input.Wrapper>
         <Center mt="lg">
-          <Button
-            variant="light"
-            type="submit"
-            disabled={createRoomName.length === 0}
-          >
+          <Button variant="light" type="submit" disabled={createRoomName.length === 0}>
             Create Room
           </Button>
         </Center>
