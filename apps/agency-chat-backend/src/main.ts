@@ -18,8 +18,9 @@ async function bootstrap() {
   );
 
   const configService = app.get(ConfigService);
-
+  const port = configService.get<number>('port');
   const corsOptions = configService.get<CorsOptions>('corsConfig');
+
   app.enableCors(corsOptions);
 
   await app.register(fastifyCookie);
@@ -35,16 +36,16 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
 
-  // TODO: setup swagger only on dev
-  const config = new DocumentBuilder()
-    .setTitle('Agency Chat Backend')
-    .setDescription('Agency Chat API Routes')
-    .setVersion('1.0')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Agency Chat Backend')
+      .setDescription('Agency Chat API Routes')
+      .setVersion('1.0')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('swagger', app, document);
+  }
 
-  const port = configService.get<number>('port');
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
