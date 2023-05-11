@@ -17,7 +17,6 @@ class AuthService extends BaseService {
 
       return profileResponse.data;
     } catch (error) {
-      console.log('not logged in');
       console.error(error);
       throw error;
     }
