@@ -1,5 +1,5 @@
 {
 	"*.{js,jsx,ts,tsx,json}": [
-		"npx nx affected:lint"
+		"nx run-many --target=lint --all --parallel"
 	]
 }
