@@ -62,7 +62,7 @@ export class MessagesGateway
 
   handleConnection(
     @ConnectedSocket() client: AuthenticatedSocket,
-    ...args: any[]
+    ..._args: any[]
   ) {
     const { id, username, role } = client.data.user;
 
