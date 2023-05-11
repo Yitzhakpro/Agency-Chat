@@ -1,4 +1,4 @@
-import { Button, Container } from '@mantine/core';
+import { Button, Container, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import CreateRoomModal from '../CreateRoomModal';
 
@@ -19,21 +19,15 @@ function RoomsControls(props: IRoomsControlsProps): JSX.Element {
   };
 
   return (
-    <Container
-      style={{ display: 'flex', flexDirection: 'row' }}
-      size="sm"
-      p={0}
-    >
-      <Button
-        style={{ flex: 1 }}
-        variant="default"
-        onClick={handleOpenCreateRoomModal}
-      >
-        Create
-      </Button>
-      <Button style={{ flex: 1 }} variant="default" onClick={onRefresh}>
-        Refresh
-      </Button>
+    <Container size="sm" p={0}>
+      <Group grow spacing="xs">
+        <Button variant="default" onClick={handleOpenCreateRoomModal}>
+          Create
+        </Button>
+        <Button variant="default" onClick={onRefresh}>
+          Refresh
+        </Button>
+      </Group>
 
       <CreateRoomModal isOpen={createRoomOpened} close={closeCreateRoomModal} />
     </Container>

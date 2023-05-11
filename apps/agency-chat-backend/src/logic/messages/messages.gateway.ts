@@ -251,6 +251,8 @@ export class MessagesGateway
 
     kickedUserClient.leave(currentRoom);
 
+    kickedUserClient.emit(SERVER_MESSAGES.GOT_KICKED);
+
     this.server
       .to(currentRoom)
       .emit(SERVER_MESSAGES.MESSAGE_SENT, kickedMessage);
@@ -290,6 +292,8 @@ export class MessagesGateway
       timestamp: new Date(),
     };
 
+    mutedUserClient.emit(SERVER_MESSAGES.GOT_MUTED, time);
+
     this.server.to(currentRoom).emit(SERVER_MESSAGES.MESSAGE_SENT, muteMessage);
 
     return { success: true };
@@ -327,6 +331,8 @@ export class MessagesGateway
       text: `${roleUsername} banned ${username}`,
       timestamp: new Date(),
     };
+
+    bannedUserClient.emit(SERVER_MESSAGES.GOT_BANNED, time);
 
     bannedUserClient.leave(currentRoom);
     bannedUserClient.disconnect();
