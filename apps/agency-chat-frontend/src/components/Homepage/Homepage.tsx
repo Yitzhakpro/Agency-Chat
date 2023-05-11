@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import { Button, Center, Container, Text } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
 function Homepage(): JSX.Element {
   const navigate = useNavigate();

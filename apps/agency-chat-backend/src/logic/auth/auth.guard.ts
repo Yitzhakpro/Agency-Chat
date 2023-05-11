@@ -4,10 +4,10 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import type { FastifyRequest, FastifyReply } from 'fastify';
+import { JwtService } from '@nestjs/jwt';
 import type { TokenInfo } from '../../types';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

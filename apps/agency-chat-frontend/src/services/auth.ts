@@ -1,10 +1,10 @@
 import { BaseService } from './base';
-import type { AxiosResponse } from 'axios';
 import type {
   LoginData,
   RegisterData,
   UserInfo,
 } from '@agency-chat/shared/interfaces';
+import type { AxiosResponse } from 'axios';
 
 class AuthService extends BaseService {
   constructor() {

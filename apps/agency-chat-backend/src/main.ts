@@ -1,3 +1,5 @@
+import { SocketIOAdapter } from '@agency-chat/agency-chat-backend/util';
+import fastifyCookie from '@fastify/cookie';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -6,8 +8,6 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import fastifyCookie from '@fastify/cookie';
-import { SocketIOAdapter } from '@agency-chat/agency-chat-backend/util';
 import { AppModule } from './app/app.module';
 import type { CorsOptions } from './config';
 

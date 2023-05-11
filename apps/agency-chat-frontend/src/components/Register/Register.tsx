@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -10,6 +9,7 @@ import {
   Text,
 } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Register(): JSX.Element {

@@ -1,5 +1,5 @@
-import type { CookieSerializeOptions } from '@fastify/cookie';
 import type { CorsOptions } from './types';
+import type { CookieSerializeOptions } from '@fastify/cookie';
 
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 8080,

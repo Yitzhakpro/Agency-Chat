@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -10,6 +9,7 @@ import {
   Text,
 } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
+import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Login(): JSX.Element {

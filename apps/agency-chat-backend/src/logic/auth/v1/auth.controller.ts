@@ -1,3 +1,4 @@
+import { UserInfo } from '@agency-chat/shared/interfaces';
 import {
   Body,
   Controller,
@@ -10,13 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserInfo } from '@agency-chat/shared/interfaces';
 import { AuthGuard } from '../auth.guard';
-import { LoginDto, RegisterDto } from './dto';
 import { AuthService } from './auth.service';
-import type { FastifyReply } from 'fastify';
-import type { CookieSerializeOptions } from '@fastify/cookie';
+import { LoginDto, RegisterDto } from './dto';
 import type { AuthenticatedRequest } from '../../../types';
+import type { CookieSerializeOptions } from '@fastify/cookie';
+import type { FastifyReply } from 'fastify';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {

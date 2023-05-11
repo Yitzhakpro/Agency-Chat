@@ -1,3 +1,4 @@
+import { EXCEPTIONS } from '@agency-chat/shared/constants';
 import {
   CanActivate,
   ExecutionContext,
@@ -6,10 +7,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WsException } from '@nestjs/websockets';
-import { EXCEPTIONS } from '@agency-chat/shared/constants';
 import { userStatusClient } from '../../database/redis';
-import type { RedisClientType } from 'redis';
 import type { AuthenticatedSocket } from '../../types';
+import type { RedisClientType } from 'redis';
 
 @Injectable()
 export class MessagingGuard implements CanActivate, OnModuleInit {

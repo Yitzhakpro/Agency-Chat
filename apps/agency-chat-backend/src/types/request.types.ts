@@ -1,5 +1,5 @@
-import type { FastifyRequest } from 'fastify';
 import type { Role } from '@agency-chat/shared/interfaces';
+import type { FastifyRequest } from 'fastify';
 
 export interface TokenInfo {
   id: string;

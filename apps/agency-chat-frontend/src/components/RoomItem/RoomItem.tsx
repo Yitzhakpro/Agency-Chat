@@ -1,7 +1,7 @@
+import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
+import { Button, Divider, Paper, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, Divider, Paper, Text } from '@mantine/core';
-import { CLIENT_MESSAGES } from '@agency-chat/shared/constants';
 import { MessageClient } from '../../services';
 import type { StatusReturn } from '@agency-chat/shared/interfaces';
 

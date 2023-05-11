@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Auth } from '../services';
 import { AuthContext } from '../context';
+import { Auth } from '../services';
 import type { UserStateInfo } from '../types';
 
 interface IAuthProviderProps {

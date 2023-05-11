@@ -1,4 +1,10 @@
+import {
+  CLIENT_MESSAGES,
+  SERVER_MESSAGES,
+} from '@agency-chat/shared/constants';
 import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -6,31 +12,25 @@ import {
   SubscribeMessage,
   MessageBody,
 } from '@nestjs/websockets';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import cookie from 'cookie';
 import { nanoid } from 'nanoid';
-import {
-  CLIENT_MESSAGES,
-  SERVER_MESSAGES,
-} from '@agency-chat/shared/constants';
 import { sessionClient, userStatusClient } from '../../database/redis';
 import { MessagingGuard } from './messaging.guard';
 import { RoleMessagingGuard } from './roleMessaging.guard';
-import type {
-  OnGatewayInit,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-} from '@nestjs/websockets';
-import type { Server, Socket } from 'socket.io';
-import type { RedisClientType } from 'redis';
+import type { TokenInfo } from '../../types';
+import type { AuthenticatedSocket } from '../../types';
 import type {
   GetRoomsReturn,
   Message,
   StatusReturn,
 } from '@agency-chat/shared/interfaces';
-import type { TokenInfo } from '../../types';
-import type { AuthenticatedSocket } from '../../types';
+import type {
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
+import type { RedisClientType } from 'redis';
+import type { Server, Socket } from 'socket.io';
 
 @WebSocketGateway(8081)
 export class MessagesGateway

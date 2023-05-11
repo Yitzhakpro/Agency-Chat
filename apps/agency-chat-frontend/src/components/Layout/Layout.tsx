@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
+import { AppShell } from '@mantine/core';
 import { Outlet } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { AppShell } from '@mantine/core';
 import { useAuth } from '../../hooks';
 import { MessageClient } from '../../services';
 import Header from '../Header';

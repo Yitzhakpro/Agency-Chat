@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import {
   Login,
   Register,

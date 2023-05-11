@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import {
   ActionIcon,
   Group,
@@ -7,6 +6,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { IconSun, IconMoon } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
 function Header(): JSX.Element {

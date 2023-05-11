@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { Text, ScrollArea, Box, Center } from '@mantine/core';
 import {
   CLIENT_MESSAGES,
   EXCEPTIONS,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
+import { Text, ScrollArea, Box, Center } from '@mantine/core';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { MessageClient } from '../../services';
 import MessageItem from '../MessageItem';
-import SystemMessageItem from '../SystemMessageItem';
 import SendMessageInput from '../SendMessageInput';
+import SystemMessageItem from '../SystemMessageItem';
 import type {
   StatusReturn,
   Message,

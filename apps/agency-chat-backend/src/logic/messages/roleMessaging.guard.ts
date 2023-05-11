@@ -1,6 +1,6 @@
+import { EXCEPTIONS } from '@agency-chat/shared/constants';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
-import { EXCEPTIONS } from '@agency-chat/shared/constants';
 import type { AuthenticatedSocket } from '../../types';
 
 @Injectable()

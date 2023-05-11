@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import { toast } from 'react-toastify';
-import { Autocomplete, Button, Divider } from '@mantine/core';
 import {
   COMMANDS,
   CLIENT_MESSAGES,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
+import { Autocomplete, Button, Divider } from '@mantine/core';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks';
 import { MessageClient } from '../../services';
 import type { StatusReturn, Command } from '@agency-chat/shared/interfaces';

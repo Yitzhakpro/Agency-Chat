@@ -1,15 +1,15 @@
+import { getUserInfo } from '@agency-chat/agency-chat-backend/util';
+import { compareHash, hashWithSalt } from '@agency-chat/shared/util-hashing';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '@prisma/client';
-import {
+import { UserService } from '../../user';
+import type { AuthReturn } from './types';
+import type {
   LoginData,
   RegisterData,
   UserInfo,
 } from '@agency-chat/shared/interfaces';
-import { compareHash, hashWithSalt } from '@agency-chat/shared/util-hashing';
-import { getUserInfo } from '@agency-chat/agency-chat-backend/util';
-import { UserService } from '../../user';
-import type { AuthReturn } from './types';
 
 @Injectable()
 export class AuthService {
