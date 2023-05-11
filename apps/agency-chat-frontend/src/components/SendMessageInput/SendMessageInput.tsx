@@ -1,13 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { Button, Divider, Input } from '@mantine/core';
+import { Autocomplete, Button, Divider } from '@mantine/core';
 import {
+  COMMANDS,
   CLIENT_MESSAGES,
   SERVER_MESSAGES,
 } from '@agency-chat/shared/constants';
 import { useAuth } from '../../hooks';
 import { MessageClient } from '../../services';
 import type { StatusReturn, Command } from '@agency-chat/shared/interfaces';
+
+const COMMANDS_WITH_PREFIX = COMMANDS.map((command) => `/${command}`);
 
 function SendMessageInput(): JSX.Element {
   const { role } = useAuth();
@@ -17,10 +20,11 @@ function SendMessageInput(): JSX.Element {
 
   const mutedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleChangeMessage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setMessage(event.target.value);
+  const commandsList =
+    role === 'ADMIN' && message.startsWith('/') ? COMMANDS_WITH_PREFIX : [];
+
+  const handleChangeMessage = (value: string): void => {
+    setMessage(value);
   };
 
   const handleSendCommand = (commandText: string) => {
@@ -50,7 +54,6 @@ function SendMessageInput(): JSX.Element {
     }
   };
 
-  // TODO: indicate failure of sending
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!message) {
@@ -90,13 +93,14 @@ function SendMessageInput(): JSX.Element {
       style={{ display: 'flex', flexDirection: 'row' }}
       onSubmit={handleSendMessage}
     >
-      <Input
+      <Autocomplete
         style={{ flex: 9 }}
         type="text"
         placeholder="Enter your message"
         required
         disabled={isDisabled}
         value={message}
+        data={commandsList}
         onChange={handleChangeMessage}
       />
       <Divider orientation="vertical" ml="xs" mr="xs" />
