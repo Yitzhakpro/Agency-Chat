@@ -1,4 +1,4 @@
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -42,6 +42,7 @@ export class MessagesGateway
   private tokenSecret: string;
   private sessionClient: RedisClientType;
   private userStatusClient: RedisClientType;
+  private readonly logger = new Logger(MessagesGateway.name);
 
   constructor(
     private readonly jwtService: JwtService,
@@ -65,7 +66,7 @@ export class MessagesGateway
   ) {
     const { id, username, role } = client.data.user;
 
-    console.log(`${id}-${username} [${role}] connected`);
+    this.logger.log(`${id}-${username} [${role}] connected`);
 
     // Renew redis user session lock
     client.conn.on('packet', async (packet) => {
@@ -82,7 +83,7 @@ export class MessagesGateway
   handleDisconnect(@ConnectedSocket() client: AuthenticatedSocket) {
     const { id, username, role } = client.data.user;
 
-    console.log(`${id}-${username} [${role}] disconnected`);
+    this.logger.log(`${id}-${username} [${role}] disconnected`);
   }
 
   @SubscribeMessage(CLIENT_MESSAGES.GET_ROOMS)
@@ -123,7 +124,7 @@ export class MessagesGateway
       };
     }
 
-    console.log(`${id}-${username} [${role}] created room: ${roomName}`);
+    this.logger.log(`${id}-${username} [${role}] created room: ${roomName}`);
 
     client.join(roomName);
 
@@ -155,7 +156,7 @@ export class MessagesGateway
 
     client.join(roomName);
 
-    console.log(`${id}-${username} [${role}] joined room: ${roomName}`);
+    this.logger.log(`${id}-${username} [${role}] joined room: ${roomName}`);
 
     const joinedMessaged: Message = {
       type: 'user_joined',
@@ -203,8 +204,7 @@ export class MessagesGateway
     }
 
     const currentRoom = [...client.rooms][1];
-    // TODO: create better log system
-    console.log(
+    this.logger.log(
       `${id}-${username} [${role}] sent: ${message} to room: ${currentRoom}`
     );
 
@@ -235,8 +235,7 @@ export class MessagesGateway
     }
     const { role } = kickedUserClient.data.user;
 
-    // TODO: create better log system
-    console.log(
+    this.logger.warn(
       `${id}-${username} [${role}] kicked ${username} from room: ${currentRoom}`
     );
 
@@ -278,8 +277,7 @@ export class MessagesGateway
 
     this.userStatusClient.set(username, 'MUTE', { EX: time });
 
-    // TODO: create better log system
-    console.log(
+    this.logger.warn(
       `${id}-${username} [${role}] muted ${username} for ${time} in room: ${currentRoom}`
     );
 
@@ -318,8 +316,7 @@ export class MessagesGateway
 
     this.userStatusClient.set(username, 'BAN', { EX: time });
 
-    // TODO: create better log system
-    console.log(
+    this.logger.warn(
       `${id}-${username} [${role}] banned ${username} for ${time} in room: ${currentRoom}`
     );
 
@@ -395,7 +392,7 @@ export class MessagesGateway
     if (this.isAlreadyInARoom(client)) {
       const roomName = [...client.rooms][1];
 
-      console.log(
+      this.logger.log(
         `${id}-${username} [${role}] disconnected from room: ${roomName}`
       );
 
