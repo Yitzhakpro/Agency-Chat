@@ -35,12 +35,6 @@ function Room(): JSX.Element {
     // ?: think about moving it outside
     function updateMessages(msg: Message) {
       setMessages((prevMessages) => [...prevMessages, msg]);
-      if (messagesViewport.current) {
-        messagesViewport.current.scrollTo({
-          top: messagesViewport.current.scrollHeight,
-          behavior: 'smooth',
-        });
-      }
     }
 
     MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
@@ -49,6 +43,16 @@ function Room(): JSX.Element {
       MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
     };
   }, []);
+
+  // scrolling to bottom of chat in each new message
+  useEffect(() => {
+    if (messagesViewport.current) {
+      messagesViewport.current.scrollTo({
+        top: messagesViewport.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages]);
 
   // handle command / message errors
   useEffect(() => {
