@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Center, Loader } from '@mantine/core';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../context';
 import { Auth } from '../services';
@@ -143,7 +144,11 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
   };
 
   if (isLoading) {
-    return <h1>loading</h1>;
+    return (
+      <Center style={{ height: '100%' }}>
+        <Loader variant="bars" />
+      </Center>
+    );
   }
 
   return (
