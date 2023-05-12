@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Button, Center, Group, Input, PasswordInput, Text } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
 import { Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks';
 
 function Login(): JSX.Element {
@@ -28,7 +29,11 @@ function Login(): JSX.Element {
       const { state } = location;
       const returnTo = state && state.from ? state.from.pathname ?? '/' : '/';
 
+      toast('Logged in successfully!', { type: 'success' });
+
       navigate(returnTo, { replace: true });
+    } else {
+      toast('Login failed, check your username/password', { type: 'error' });
     }
   };
 
