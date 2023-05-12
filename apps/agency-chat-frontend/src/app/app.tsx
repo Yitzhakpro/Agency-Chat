@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -12,20 +11,12 @@ import {
   RoomsPage,
   Room,
 } from '../components';
+import { useColorSchemeManager } from '../hooks';
 import { AuthProvider } from '../providers';
-import type { ColorScheme } from '@mantine/core';
 import 'react-toastify/dist/ReactToastify.css';
 
 export function App() {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(
-    (localStorage.getItem('theme') as ColorScheme) || 'light'
-  );
-
-  const toggleColorScheme = (value?: ColorScheme) => {
-    const newScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
-    localStorage.setItem('theme', newScheme);
-    setColorScheme(newScheme);
-  };
+  const { colorScheme, toggleColorScheme } = useColorSchemeManager();
 
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
