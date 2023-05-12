@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Button, Center, Group, Input, PasswordInput, Text } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks';
 
 function Register(): JSX.Element {
@@ -34,7 +35,11 @@ function Register(): JSX.Element {
 
     const registeredSuccessfully = await register(email, username, password);
     if (registeredSuccessfully) {
+      toast('Registered successfully!', { type: 'success' });
+
       navigate('/');
+    } else {
+      toast('Register failed, try again later!', { type: 'error' });
     }
   };
 
