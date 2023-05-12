@@ -113,7 +113,12 @@ function Room(): JSX.Element {
         <Text>Room: {roomId}</Text>
       </Center>
 
-      <ScrollArea style={{ height: '100%' }} mt="sm" viewportRef={messagesViewport}>
+      <ScrollArea
+        style={{ height: '100%' }}
+        mt="sm"
+        offsetScrollbars
+        viewportRef={messagesViewport}
+      >
         {messages.map((msg) => {
           const { id, type, username, role, text, timestamp } = msg;
 
