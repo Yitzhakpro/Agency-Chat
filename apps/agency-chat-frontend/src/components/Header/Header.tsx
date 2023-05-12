@@ -5,16 +5,22 @@ import {
   Text,
   useMantineColorScheme,
 } from '@mantine/core';
-import { IconSun, IconMoon } from '@tabler/icons-react';
+import { IconSun, IconMoon, IconLogout } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks';
 
 function Header(): JSX.Element {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { isLoggedIn, username } = useAuth();
+  const { isLoggedIn, username, logout } = useAuth();
 
   const toggleScheme = (): void => {
     toggleColorScheme();
+  };
+
+  const handleLogout = async (): Promise<void> => {
+    await logout();
+    toast('Logged out successfully!', { type: 'success' });
   };
 
   return (
@@ -31,8 +37,15 @@ function Header(): JSX.Element {
           <Text weight={700}>Agency Chat</Text>
         </Link>
 
-        <Group>
-          {isLoggedIn && <Text>Welcome back, {username}</Text>}
+        <Group spacing="xs">
+          {isLoggedIn && (
+            <>
+              <Text>Welcome back, {username}</Text>
+              <ActionIcon variant="outline" size="md" radius="md" onClick={handleLogout}>
+                <IconLogout />
+              </ActionIcon>
+            </>
+          )}
           <ActionIcon variant="outline" size="md" radius="md" onClick={toggleScheme}>
             {colorScheme === 'dark' ? <IconSun /> : <IconMoon />}
           </ActionIcon>
