@@ -1,4 +1,5 @@
 import { CLIENT_MESSAGES, SERVER_MESSAGES } from '@agency-chat/shared/constants';
+import { humanize } from '@agency-chat/shared/util-dates';
 import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -264,7 +265,7 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 			id: nanoid(),
 			username,
 			role,
-			text: `${roleUsername} muted ${username} for: ${time} seconds`,
+			text: `${roleUsername} muted ${username} for: ${humanize(time)}`,
 			timestamp: new Date(),
 		};
 
@@ -303,7 +304,7 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 			id: nanoid(),
 			username,
 			role,
-			text: `${roleUsername} banned ${username}`,
+			text: `${roleUsername} banned ${username} for ${humanize(time)}`,
 			timestamp: new Date(),
 		};
 

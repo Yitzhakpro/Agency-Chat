@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { CLIENT_MESSAGES, EXCEPTIONS, SERVER_MESSAGES } from '@agency-chat/shared/constants';
+import { humanize } from '@agency-chat/shared/util-dates';
 import { Text, ScrollArea, Box, Center } from '@mantine/core';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -78,11 +79,11 @@ function Room(): JSX.Element {
     }
 
     function handleGotMuted(time: number) {
-      toast(`You got muted for ${time} seconds.`, { type: 'error' });
+      toast(`You got muted for ${humanize(time)} (${time} seconds).`, { type: 'error' });
     }
 
     function handleGotBanned(time: number) {
-      toast(`You got banned for ${time} seconds.`, { type: 'error' });
+      toast(`You got banned for ${humanize(time)} (${time} seconds).`, { type: 'error' });
       navigate('/');
     }
 
