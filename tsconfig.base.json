@@ -1,35 +1,30 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
-    "lib": ["es2017", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@agency-chat/agency-chat-backend/util": [
-        "libs/agency-chat-backend/util/src/index.ts"
-      ],
-      "@agency-chat/shared/constants": ["libs/shared/constants/src/index.ts"],
-      "@agency-chat/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
-      "@agency-chat/shared/util-hashing": [
-        "libs/shared/util-hashing/src/index.ts"
-      ],
-      "@agency-chat/shared/util-http-client": [
-        "libs/shared/util-http-client/src/index.ts"
-      ],
-      "@agency-chat/shared/util-socket-client": [
-        "libs/shared/util-socket-client/src/index.ts"
-      ]
-    }
-  },
-  "exclude": ["node_modules", "tmp"]
+	"compileOnSave": false,
+	"compilerOptions": {
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"target": "es2015",
+		"module": "esnext",
+		"lib": ["es2017", "dom"],
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@agency-chat/agency-chat-backend/util": ["libs/agency-chat-backend/util/src/index.ts"],
+			"@agency-chat/shared/constants": ["libs/shared/constants/src/index.ts"],
+			"@agency-chat/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
+			"@agency-chat/shared/util-dates": ["libs/shared/util-dates/src/index.ts"],
+			"@agency-chat/shared/util-hashing": ["libs/shared/util-hashing/src/index.ts"],
+			"@agency-chat/shared/util-http-client": ["libs/shared/util-http-client/src/index.ts"],
+			"@agency-chat/shared/util-socket-client": [
+				"libs/shared/util-socket-client/src/index.ts"
+			]
+		}
+	},
+	"exclude": ["node_modules", "tmp"]
 }
