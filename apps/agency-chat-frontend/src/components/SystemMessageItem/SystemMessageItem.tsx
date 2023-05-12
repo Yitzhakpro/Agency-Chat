@@ -10,7 +10,7 @@ function SystemMessageItem(props: ISystemMessageItemProps): JSX.Element {
 
   return (
     <>
-      <Center>
+      <Center style={{ wordBreak: 'break-word', textAlign: 'center' }}>
         <Text>{text}</Text>
       </Center>
       <Divider my="xs" />
