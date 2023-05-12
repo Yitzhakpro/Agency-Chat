@@ -8,58 +8,42 @@ class AuthService extends BaseService {
   }
 
   public async profile(): Promise<UserInfo> {
-    try {
-      const profileResponse = await this.client.get<UserInfo>('/profile');
+    const profileResponse = await this.client.get<UserInfo>('/profile');
 
-      return profileResponse.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    return profileResponse.data;
   }
 
   public async login(email: string, password: string): Promise<UserInfo> {
-    try {
-      const loginResponse = await this.client.post<UserInfo, AxiosResponse<UserInfo>, LoginData>(
-        '/login',
-        {
-          email,
-          password,
-        }
-      );
+    const loginResponse = await this.client.post<UserInfo, AxiosResponse<UserInfo>, LoginData>(
+      '/login',
+      {
+        email,
+        password,
+      }
+    );
 
-      return loginResponse.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    return loginResponse.data;
   }
 
   public async register(email: string, username: string, password: string): Promise<UserInfo> {
-    try {
-      const registerResponse = await this.client.post<
-        UserInfo,
-        AxiosResponse<UserInfo>,
-        RegisterData
-      >('/register', {
-        email,
-        username,
-        password,
-      });
+    const registerResponse = await this.client.post<
+      UserInfo,
+      AxiosResponse<UserInfo>,
+      RegisterData
+    >('/register', {
+      email,
+      username,
+      password,
+    });
 
-      return registerResponse.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    return registerResponse.data;
   }
 
-  public async logout() {
+  public async logout(): Promise<void> {
     try {
       await this.client.get('/logout');
-    } catch (error) {
-      console.error(error);
-      throw error;
+    } catch (_error) {
+      return;
     }
   }
 }
