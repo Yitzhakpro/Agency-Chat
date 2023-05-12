@@ -18,6 +18,10 @@ function Room(): JSX.Element {
   const messagesViewport = useRef<HTMLDivElement>(null);
   const readyToLeave = useRef(false);
 
+  const onMessageRecv = (message: Message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
+
   useEffect(() => {
     if (roomId) {
       MessageClient.emit(CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM, roomId, (status: StatusReturn) => {
@@ -32,15 +36,10 @@ function Room(): JSX.Element {
   }, [navigate, roomId]);
 
   useEffect(() => {
-    // ?: think about moving it outside
-    function updateMessages(msg: Message) {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    }
-
-    MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
+    MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, onMessageRecv);
 
     return () => {
-      MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
+      MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, onMessageRecv);
     };
   }, []);
 
