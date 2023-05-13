@@ -75,6 +75,7 @@ function Register(): JSX.Element {
             icon={<IconLock />}
             placeholder="Your password"
             label="Your password"
+            description="Must contain: 1 lowercase, 1 uppercase, 1 number"
             withAsterisk
             value={password}
             onChange={handlePasswordChange}
