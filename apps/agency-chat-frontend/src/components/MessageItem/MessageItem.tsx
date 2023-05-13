@@ -14,15 +14,27 @@ function MessageItem(props: IMessageItemProps): JSX.Element {
 
   return (
     <>
-      <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-        <Text weight={700}>[ {username} ]</Text>
+      <Box
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          wordBreak: 'break-word',
+        }}
+      >
+        <Text
+          style={{ overflow: 'visible', wordBreak: 'normal', whiteSpace: 'nowrap' }}
+          weight={700}
+        >
+          [ {username} ]
+        </Text>
+
         {role !== 'USER' && (
-          <Badge ml="xs" color="red">
+          <Badge style={{ overflow: 'visible', wordBreak: 'normal' }} ml="xs" color="red">
             {role}
           </Badge>
         )}
         <Text mr="xs">:</Text>
-        {/* TODO: make text wrap to next line */}
         <Text>{text}</Text>
       </Box>
       <Divider my="sm" />

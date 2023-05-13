@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { CLIENT_MESSAGES, EXCEPTIONS, SERVER_MESSAGES } from '@agency-chat/shared/constants';
+import { humanize } from '@agency-chat/shared/util-dates';
 import { Text, ScrollArea, Box, Center } from '@mantine/core';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -18,6 +19,10 @@ function Room(): JSX.Element {
   const messagesViewport = useRef<HTMLDivElement>(null);
   const readyToLeave = useRef(false);
 
+  const onMessageRecv = (message: Message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
+
   useEffect(() => {
     if (roomId) {
       MessageClient.emit(CLIENT_MESSAGES.IS_CONNECTED_TO_ROOM, roomId, (status: StatusReturn) => {
@@ -32,15 +37,10 @@ function Room(): JSX.Element {
   }, [navigate, roomId]);
 
   useEffect(() => {
-    // ?: think about moving it outside
-    function updateMessages(msg: Message) {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    }
-
-    MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
+    MessageClient.on(SERVER_MESSAGES.MESSAGE_SENT, onMessageRecv);
 
     return () => {
-      MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, updateMessages);
+      MessageClient.off(SERVER_MESSAGES.MESSAGE_SENT, onMessageRecv);
     };
   }, []);
 
@@ -79,11 +79,11 @@ function Room(): JSX.Element {
     }
 
     function handleGotMuted(time: number) {
-      toast(`You got muted for ${time} seconds.`, { type: 'error' });
+      toast(`You got muted for ${humanize(time)} (${time} seconds).`, { type: 'error' });
     }
 
     function handleGotBanned(time: number) {
-      toast(`You got banned for ${time} seconds.`, { type: 'error' });
+      toast(`You got banned for ${humanize(time)} (${time} seconds).`, { type: 'error' });
       navigate('/');
     }
 
@@ -114,7 +114,12 @@ function Room(): JSX.Element {
         <Text>Room: {roomId}</Text>
       </Center>
 
-      <ScrollArea style={{ height: '100%' }} mt="sm" viewportRef={messagesViewport}>
+      <ScrollArea
+        style={{ height: '100%' }}
+        mt="sm"
+        offsetScrollbars
+        viewportRef={messagesViewport}
+      >
         {messages.map((msg) => {
           const { id, type, username, role, text, timestamp } = msg;
 

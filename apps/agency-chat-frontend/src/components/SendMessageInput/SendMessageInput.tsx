@@ -51,10 +51,12 @@ function SendMessageInput(): JSX.Element {
       return;
     }
 
-    if (message.startsWith('/')) {
-      handleSendCommand(message.slice(1));
+    const cleanedMessage = message.trim();
+
+    if (cleanedMessage.startsWith('/')) {
+      handleSendCommand(cleanedMessage.slice(1));
     } else {
-      MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, message);
+      MessageClient.emit(CLIENT_MESSAGES.SEND_MESSAGE, cleanedMessage);
     }
     setMessage('');
   };
