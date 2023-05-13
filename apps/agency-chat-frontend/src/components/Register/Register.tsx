@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { MIN_PASSWORD_LENGTH } from '@agency-chat/shared/constants';
 import { Box, Button, Center, Group, Input, PasswordInput, Text } from '@mantine/core';
 import { IconAt, IconLock } from '@tabler/icons-react';
+import { isStrongPassword } from 'class-validator';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks';
@@ -32,6 +34,24 @@ function Register(): JSX.Element {
 
   const handleSubmitRegister = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
+
+    const isPasswordsMatch = password === confirmPassword;
+    if (!isPasswordsMatch) {
+      toast("Password and Confirm Password don't match", { type: 'error' });
+      return;
+    }
+
+    const passwordIsStrong = isStrongPassword(password, {
+      minLength: MIN_PASSWORD_LENGTH,
+      minLowercase: 1,
+      minNumbers: 1,
+      minUppercase: 1,
+      minSymbols: 0,
+    });
+    if (!passwordIsStrong) {
+      toast('Password is not strong enough', { type: 'error' });
+      return;
+    }
 
     const registeredSuccessfully = await register(email, username, password);
     if (registeredSuccessfully) {
@@ -75,6 +95,7 @@ function Register(): JSX.Element {
             icon={<IconLock />}
             placeholder="Your password"
             label="Your password"
+            description="Must contain: 1 lowercase, 1 uppercase, 1 number"
             withAsterisk
             value={password}
             onChange={handlePasswordChange}
