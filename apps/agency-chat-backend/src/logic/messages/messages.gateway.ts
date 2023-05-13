@@ -1,3 +1,4 @@
+import { getUserCreatedRooms } from '@agency-chat/agency-chat-backend/util';
 import { CLIENT_MESSAGES, SERVER_MESSAGES } from '@agency-chat/shared/constants';
 import { humanize } from '@agency-chat/shared/util-dates';
 import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common';
@@ -73,20 +74,9 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
 	@SubscribeMessage(CLIENT_MESSAGES.GET_ROOMS)
 	handleGetRooms(@ConnectedSocket() _client: AuthenticatedSocket): GetRoomsReturn {
-		const allRooms = Array.from(this.server.of('/').adapter.rooms);
-		const filteredList = allRooms
-			.filter(([roomKey, roomUsers]) => {
-				if (roomUsers.size === 1 && roomUsers.has(roomKey)) {
-					return false;
-				}
+		const socketIoRooms = this.server.of('/').adapter.rooms;
 
-				return true;
-			})
-			.map(([roomKey, _roomUsers]) => {
-				return roomKey;
-			});
-
-		return filteredList;
+		return getUserCreatedRooms(socketIoRooms);
 	}
 
 	@UseGuards(MessagingGuard)
