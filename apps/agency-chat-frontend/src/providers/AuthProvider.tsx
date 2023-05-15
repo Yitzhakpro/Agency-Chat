@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Auth } from '../services';
+import { Center, Loader } from '@mantine/core';
 import { AuthContext } from '../context';
+import { Auth } from '../services';
 import type { UserStateInfo } from '../types';
 
 interface IAuthProviderProps {
@@ -19,7 +20,6 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
     role: 'USER',
     createdAt: new Date(),
   });
-  const [_error, setError] = useState({ isError: false, message: '' }); // TODO: think if needed
 
   useEffect(() => {
     setIsLoading(true);
@@ -31,7 +31,7 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
         setUserInfo({ isLoggedIn: true, id, email, username, role, createdAt });
         setIsLoading(false);
       })
-      .catch((error) => {
+      .catch((_error) => {
         setUserInfo({
           isLoggedIn: false,
           id: '',
@@ -40,7 +40,6 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
           role: 'USER',
           createdAt: new Date(),
         });
-        setError({ isError: true, message: error.message });
         setIsLoading(false);
       });
   }, []);
@@ -83,11 +82,7 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
     }
   };
 
-  const register = async (
-    email: string,
-    username: string,
-    password: string
-  ): Promise<boolean> => {
+  const register = async (email: string, username: string, password: string): Promise<boolean> => {
     setUserInfo({
       isLoggedIn: false,
       id: '',
@@ -99,13 +94,7 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
 
     try {
       const registerResp = await Auth.register(email, username, password);
-      const {
-        id,
-        email: userEmail,
-        username: userUsername,
-        role,
-        createdAt,
-      } = registerResp;
+      const { id, email: userEmail, username: userUsername, role, createdAt } = registerResp;
 
       setUserInfo({
         isLoggedIn: true,
@@ -147,7 +136,11 @@ function AuthProvider(props: IAuthProviderProps): JSX.Element {
   };
 
   if (isLoading) {
-    return <h1>loading</h1>;
+    return (
+      <Center style={{ height: '100%' }}>
+        <Loader variant="bars" />
+      </Center>
+    );
   }
 
   return (

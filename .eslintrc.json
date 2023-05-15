@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx"],
+  "plugins": ["@nrwl/nx", "import", "@typescript-eslint", "prettier"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -17,6 +17,38 @@
                 "onlyDependOnLibsWithTags": ["*"]
               }
             ]
+          }
+        ],
+        "prettier/prettier": ["error", { "endOfLine": "auto" }],
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
+        "import/order": [
+          "error",
+          {
+            "groups": [
+              "builtin",
+              "external",
+              "parent",
+              "sibling",
+              "index",
+              "object",
+              "type"
+            ],
+            "alphabetize": { "order": "asc" },
+            "pathGroups": [
+              {
+                "pattern": "react",
+                "group": "builtin",
+                "position": "before"
+              }
+            ],
+            "pathGroupsExcludedImportTypes": ["react"]
           }
         ]
       }

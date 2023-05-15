@@ -1,4 +1,4 @@
 export interface CorsOptions {
-  origin: string;
-  credentials: boolean;
+	origin: string;
+	credentials: boolean;
 }

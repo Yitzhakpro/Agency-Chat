@@ -1,21 +1,10 @@
-import Login from './Login';
-import Register from './Register';
 import Homepage from './Homepage';
-import NotFound from './NotFound';
 import Layout from './Layout';
+import Login from './Login';
+import NotFound from './NotFound';
 import ProtectedLayout from './ProtectedLayout';
-import ChatLayout from './ChatLayout';
-import RoomsPage from './RoomsPage';
+import Register from './Register';
 import Room from './Room';
+import RoomsPage from './RoomsPage';
 
-export {
-  Login,
-  Register,
-  Homepage,
-  NotFound,
-  Layout,
-  ProtectedLayout,
-  ChatLayout,
-  RoomsPage,
-  Room,
-};
+export { Login, Register, Homepage, NotFound, Layout, ProtectedLayout, RoomsPage, Room };
