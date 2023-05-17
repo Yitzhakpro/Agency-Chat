@@ -29,6 +29,10 @@ There are also admin users that can kick/mute/ban other users.
 # Development
 **⚠️To fire up the application you will need to have redis & postgres running**
 
+**You can view the env variables that can be used in the backend in: `apps/agency-chat-backend/src/config`**
+
+**You can view the env variables that can be used in the frontend in: `apps/agency-chat-frontend/src/config/config.ts`**
+
 clone the project:
 ```bash
 $ git clone https://github.com/Yitzhakpro/Agency-Chat.git
